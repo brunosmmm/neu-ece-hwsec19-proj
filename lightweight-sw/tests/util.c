@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 int util_get_rand(uint32_t count, uint8_t* dest) {
   FILE* fp = NULL;
   int ret = 0;
@@ -23,4 +22,11 @@ int util_get_rand(uint32_t count, uint8_t* dest) {
 
   fclose(fp);
   return ERR_OK;
+}
+
+void print_bytes(uint8_t* bytes, uint32_t amount) {
+  printf("DUMP: ");
+  while(amount--) {
+    printf("%hhx%c", *bytes++, amount == 0 ? '\n' : ' ');
+  }
 }

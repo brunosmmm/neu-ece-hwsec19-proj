@@ -11,4 +11,6 @@
 // get random bytes
 int util_get_rand(uint32_t count, uint8_t *dest);
 
+void print_bytes(uint8_t *bytes, uint32_t amount);
+
 #endif
