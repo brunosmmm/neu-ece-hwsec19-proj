@@ -12,10 +12,10 @@ all: tests liblightc.a
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-simon_test_basic: $(TESTPATH)/test_simon.o $(SRCPATH)/simon.o
+simon_test_basic: $(TESTPATH)/test_simon.o $(SRCPATH)/simon.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o
+speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 tests_simon: simon_test_basic
