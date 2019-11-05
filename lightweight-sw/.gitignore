@@ -1,0 +1,4 @@
+*.o
+*.a
+speck_test_*
+simon_test_*
