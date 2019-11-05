@@ -1,11 +1,7 @@
 #include "simon.h"
+#include "primitives.h"
 #include <string.h>
 
-// Simon primitives
-#define ROTATE_LEFT(x, amount, dsize)\
-  ((x<<amount)|(x>>((dsize*8)-amount)))
-#define ROTATE_RIGHT(x, amount, dsize)\
-  ((x>>amount)|((x&((1<<amount)-1)<<((dsize*8)-amount))))
 
 // cipher topology
 #define SIMON_64_128_ROUNDS 44 // number of rounds
