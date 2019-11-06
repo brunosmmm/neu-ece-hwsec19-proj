@@ -2,11 +2,10 @@
 #include "primitives.h"
 #include <string.h>
 
-
 // cipher topology
 #define SIMON_64_128_ROUNDS 44 // number of rounds
 #define SIMON_64_128_DTYPE uint32_t // use C types for easy handling
-#define SIMON_64_128_DSIZE sizeof(uint32_t) // word size in bytes
+#define SIMON_64_128_DSIZE sizeof(SIMON_64_128_DTYPE) // word size in bytes
 
 // internal state flags
 #define SIMON_FLAG_INIT 0x1
@@ -98,7 +97,7 @@ int simon_64_128_decrypt(block64_t* input, block64_t* output) {
   unsigned int i = 0;
   SIMON_64_128_DTYPE x, y;
   if (!(state.flags & SIMON_FLAG_INIT)) {
-    return CIPHER_ERR_ENC;
+    return CIPHER_ERR_DEC;
   }
 
   x = ((SIMON_64_128_DTYPE *)input)[0];
