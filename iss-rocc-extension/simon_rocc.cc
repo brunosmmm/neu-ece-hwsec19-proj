@@ -288,6 +288,8 @@ private:
   uint8_t get_mode(void) {
     return (this->flags & SIMON_INTERNAL_MODE_MASK) >> SIMON_INTERNAL_MODE_OFFSET;
   }
+
 };
+
 
 REGISTER_EXTENSION(crypto_rocc, []() { return new crypto_rocc_t; })
