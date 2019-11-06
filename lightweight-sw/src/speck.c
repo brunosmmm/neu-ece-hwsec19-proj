@@ -38,11 +38,12 @@ static void _speck_64_128_dec_round(SPECK_64_128_DTYPE round_key,
 
 void speck_64_128_initialize(key128_t key) {
   unsigned int i = 0;
-  SPECK_64_128_DTYPE l[SPECK_64_128_ROUNDS-1];
+  SPECK_64_128_DTYPE l[SPECK_64_128_ROUNDS+SPECK_64_128_DSIZE-2];
 
   // initialize
   memset(&state, 0, sizeof(SpeckState));
   // set initial key words
+  memset(l, 0, SPECK_64_128_DSIZE*(SPECK_64_128_ROUNDS+SPECK_64_128_DSIZE-2));
   memcpy(l, (SPECK_64_128_DTYPE*)key+1,
          sizeof(key128_t)-sizeof(SPECK_64_128_DTYPE));
   state.round_keys[0] = ((SPECK_64_128_DTYPE*)key)[0];
