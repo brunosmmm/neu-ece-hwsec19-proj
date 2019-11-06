@@ -1,19 +1,28 @@
 
 PREFIX ?=
 CC ?= $(PREFIX)gcc
+RVCC ?= riscv64-unknown-elf-gcc
 SRCPATH = src
 TESTPATH = tests
 INCLUDES = include
 INCLUDEFLAGS = -I$(INCLUDES)
+RVINCLUDEFLAGS = -I../rocc-software/src
 CFLAGS ?= -Wall -g $(INCLUDEFLAGS)
+RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS)
 
 all: tests liblightc.a
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+%.rv.o: %.c
+	$(RVCC) $(RVCFLAGS) -c $< -o $@
+
 simon_test_basic: $(TESTPATH)/test_simon.o $(SRCPATH)/simon.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
+
+simon_test_riscv_basic: $(TESTPATH)/test_simon_rocc.rv.o
+	$(RVCC) $(RVCFLAGS) -o $@ $^
 
 speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
@@ -21,6 +30,9 @@ speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o $(TESTPATH)/util.o
 tests_simon: simon_test_basic
 tests_speck: speck_test_basic
 tests: tests_simon tests_speck
+
+tests_simon_riscv: simon_test_riscv_basic
+tests_riscv: tests_simon_riscv
 
 liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o
 	$(PREFIX)ar rcs $@ $^
