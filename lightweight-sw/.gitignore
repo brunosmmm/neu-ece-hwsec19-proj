@@ -2,3 +2,4 @@
 *.a
 speck_test_*
 simon_test_*
+.gdb_history
