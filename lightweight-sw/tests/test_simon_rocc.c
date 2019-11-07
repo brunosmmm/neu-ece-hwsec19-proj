@@ -42,6 +42,8 @@ int main(void) {
     ROCC_INSTRUCTION(0, block, block, 0, ROCC_FUNC_ENC);
   }
 
+  printf("INFO: ciphertext is 0x%lx\n", block);
+
   // perform decryption rounds
   for (i=0; i<rounds; i++) {
     ROCC_INSTRUCTION(0, block, block, 0, ROCC_FUNC_DEC);
