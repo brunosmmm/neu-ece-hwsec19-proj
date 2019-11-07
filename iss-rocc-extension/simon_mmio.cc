@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include "mmio_plugin.h"
+#include "simon_base.hh"
 
 extern "C" {
 #include "simon_primitives.h"
@@ -14,7 +15,7 @@ extern "C" {
 
 #define SIMON_MMIO_CONF_WR_MASK 0xFF
 
-class simon_mmio {
+class simon_mmio: public simon_base_hwacc {
 public:
   simon_mmio(const std::string &args) {}
 
