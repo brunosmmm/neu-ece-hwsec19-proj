@@ -39,8 +39,8 @@ typedef struct simon_state_s {
 static SimonState state;
 
 void _simon_64_128_enc_round(SIMON_64_128_DTYPE round_key,
-                                    SIMON_64_128_DTYPE* x,
-                                    SIMON_64_128_DTYPE* y) {
+                             SIMON_64_128_DTYPE* x,
+                             SIMON_64_128_DTYPE* y) {
   SIMON_64_128_DTYPE tmp = 0;
   tmp = *x;
   *x = *y ^ (ROTATE_LEFT(*x, 1, SIMON_64_128_DSIZE) &
@@ -51,8 +51,8 @@ void _simon_64_128_enc_round(SIMON_64_128_DTYPE round_key,
 }
 
 void _simon_64_128_dec_round(SIMON_64_128_DTYPE round_key,
-                                    SIMON_64_128_DTYPE* x,
-                                    SIMON_64_128_DTYPE* y) {
+                             SIMON_64_128_DTYPE* x,
+                             SIMON_64_128_DTYPE* y) {
   SIMON_64_128_DTYPE tmp = 0;
   tmp = *y;
   *y = *x ^ (ROTATE_LEFT(*y, 1, SIMON_64_128_DSIZE) &
@@ -62,8 +62,8 @@ void _simon_64_128_dec_round(SIMON_64_128_DTYPE round_key,
 }
 
 void _simon_128_128_enc_round(SIMON_128_128_DTYPE round_key,
-                                     SIMON_128_128_DTYPE *x,
-                                     SIMON_128_128_DTYPE *y) {
+                              SIMON_128_128_DTYPE *x,
+                              SIMON_128_128_DTYPE *y) {
   SIMON_128_128_DTYPE tmp = 0;
   tmp = *x;
   *x = *y ^
@@ -74,8 +74,8 @@ void _simon_128_128_enc_round(SIMON_128_128_DTYPE round_key,
 }
 
 void _simon_128_128_dec_round(SIMON_128_128_DTYPE round_key,
-                                     SIMON_128_128_DTYPE *x,
-                                     SIMON_128_128_DTYPE *y) {
+                              SIMON_128_128_DTYPE *x,
+                              SIMON_128_128_DTYPE *y) {
   SIMON_128_128_DTYPE tmp = 0;
   tmp = *y;
   *y = *x ^
@@ -86,7 +86,7 @@ void _simon_128_128_dec_round(SIMON_128_128_DTYPE round_key,
 }
 
 void _simon_64_128_key_expansion(key128_t key,
-                                        SIMON_ROUNDK_DTYPE* round_keys) {
+                                 SIMON_ROUNDK_DTYPE* round_keys) {
   unsigned int i = 0;
   SIMON_64_128_DTYPE kWordTmp = 0;
   memcpy(round_keys, (SIMON_64_128_DTYPE*)key,
