@@ -82,13 +82,13 @@ class crypto_rocc_t : public rocc_t
         if (this->get_mode() == SIMON_64_128_MODE) {
           // only one register needed
           SIMON_64_128_WORD_DTYPE x, y;
-          x = ((SIMON_64_128_WORD_DTYPE*)xs1)[0];
-          y = ((SIMON_64_128_WORD_DTYPE*)xs1)[1];
+          x = ((SIMON_64_128_WORD_DTYPE*)&xs1)[0];
+          y = ((SIMON_64_128_WORD_DTYPE*)&xs1)[1];
           _simon_64_128_enc_round(this->round_keys.k64_128[this->round_counter++],
                                   &x,
                                   &y);
-          ((SIMON_64_128_WORD_DTYPE*)ret_val)[0] = x;
-          ((SIMON_64_128_WORD_DTYPE *)ret_val)[0] = y;
+          ((SIMON_64_128_WORD_DTYPE*)&ret_val)[0] = x;
+          ((SIMON_64_128_WORD_DTYPE *)&ret_val)[1] = y;
         } else {
           SIMON_128_128_WORD_DTYPE x, y;
           // two registers needed
@@ -111,13 +111,13 @@ class crypto_rocc_t : public rocc_t
       } else {
         if (this->get_mode() == SIMON_64_128_MODE) {
           SIMON_64_128_WORD_DTYPE x, y;
-          x = ((SIMON_64_128_WORD_DTYPE *)xs1)[0];
-          y = ((SIMON_64_128_WORD_DTYPE *)xs1)[1];
+          x = ((SIMON_64_128_WORD_DTYPE *)&xs1)[0];
+          y = ((SIMON_64_128_WORD_DTYPE *)&xs1)[1];
           _simon_64_128_dec_round(this->round_keys.k64_128[(SIMON_64_128_ROUNDS-1)-this->round_counter++],
                                   &x,
                                   &y);
-          ((SIMON_64_128_WORD_DTYPE *)ret_val)[0] = x;
-          ((SIMON_64_128_WORD_DTYPE *)ret_val)[0] = y;
+          ((SIMON_64_128_WORD_DTYPE *)&ret_val)[0] = x;
+          ((SIMON_64_128_WORD_DTYPE *)&ret_val)[1] = y;
         } else {
           SIMON_128_128_WORD_DTYPE x, y;
           // two registers needed
