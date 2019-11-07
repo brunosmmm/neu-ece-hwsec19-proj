@@ -103,7 +103,7 @@ void _simon_64_128_key_expansion(key128_t key,
 }
 
 void _simon_128_128_key_expansion(key128_t key,
-                                         SIMON_128_128_DTYPE *round_keys) {
+                                  SIMON_128_128_DTYPE *round_keys) {
   unsigned int i = 0;
   SIMON_128_128_DTYPE kWordTmp = 0;
   memcpy(round_keys, (SIMON_128_128_DTYPE *)key,
