@@ -18,8 +18,24 @@ extern "C" {
 // internal state flags - half of flags register
 #define SIMON_FLAG_INITIALIZED 0x1
 #define SIMON_FLAG_DONE 0x2
+#define SIMON_FLAG_ERR 0x4
 
 #define SIMON_MAX_ROUNDS SIMON_128_128_ROUNDS
+
+// funct field subfields
+#define SIMON_FUNCT_MODE_OFFSET 0
+#define SIMON_FUNCT_OP_OFFSET 2
+#define SIMON_FUNCT_MODE_MASK                                                  \
+  ((1 << SIMON_FUNCT_MODE_OFFSET) | (1 << (SIMON_FUNCT_MODE_OFFSET + 1)))
+#define SIMON_FUNCT_OP_MASK                                                    \
+  ((1 << SIMON_FUNCT_OP_OFFSET) | (1 << (SIMON_FUNCT_OP_OFFSET + 1)))
+
+// supported functions
+#define FUNC_INIT 0x0      // initialize with key
+#define FUNC_ENC_ROUND 0x1 // perform encryption round
+#define FUNC_DEC_ROUND 0x2 // perform decryption round
+#define FUNC_GET_FLAGS 0x3 // retrieve status
+#define FUNC_GET_HWORD 0x4 // get stored half-word (for 128/128 mode)
 
 class simon_base_hwacc {
 public:
