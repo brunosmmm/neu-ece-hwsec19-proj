@@ -14,8 +14,11 @@ libsimon_rocc.so: simon_rocc.o simon_base.o ../lightweight-sw/src/simon.o
 simon_mmio.so: ../lightweight-sw/src/simon.o simon_mmio.o simon_base.o
 	$(CXX) -fPIC -shared -o $@ $^
 
-run_test: libsimon_rocc.so
-	LD_LIBRARY_PATH=. ../riscv-isa-sim/build/spike --extension=simon_rocc ../riscv-pk/build/pk ../lightweight-sw/simon_test_riscv_basic
+rocc_test: libsimon_rocc.so
+	LD_LIBRARY_PATH=. ../riscv-isa-sim/build/spike --extension=simon_rocc ../riscv-pk/build/pk ../lightweight-sw/simon_test_rocc
+
+mmio_test:
+	../riscv-isa-sim/build/spike --extlib=./simon_mmio.so ../riscv-pk/build/pk ../lightweight-sw/simon_test_mmio
 
 clean:
 	rm -rf *.o *.so
