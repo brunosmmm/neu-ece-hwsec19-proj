@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "xcustom.h"
+#include "riscv/rvutil.h"
 
 #define ROCC_FUNC_OP_OFFSET 2
 #define ROCC_FUNC_MODE_OFFSET 0
@@ -23,13 +24,17 @@ const static uint8_t test_key[16] = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA,
 // a 64-bit plaintext block
 static uint8_t test_block[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
+
 int main(void) {
-  uint64_t rounds = 0, kw1 = 0, kw2 = 0, block = 0;
+  uint64_t rounds = 0, kw1 = 0, kw2 = 0, block = 0, cipher = 0;
+  uint64_t cycles = 0, time = 0, instret = 0;
   unsigned int i = 0;
 
   // arrange key words from array
   kw1 = ((uint64_t*)test_key)[0];
   kw2 = ((uint64_t*)test_key)[1];
+
+  cycles = rv64_get_cycles();
 
   // initialize
   ROCC_INSTRUCTION(0, rounds, kw1, kw2, ROCC_FUNC_INIT);
@@ -42,12 +47,16 @@ int main(void) {
     ROCC_INSTRUCTION(0, block, block, 0, ROCC_FUNC_ENC);
   }
 
-  printf("INFO: ciphertext is 0x%lx\n", block);
+  cipher = block;
 
   // perform decryption rounds
   for (i=0; i<rounds; i++) {
     ROCC_INSTRUCTION(0, block, block, 0, ROCC_FUNC_DEC);
   }
+
+  cycles = rv64_get_cycles() - cycles;
+
+  printf("INFO: ciphertext is 0x%lx\n", cipher);
 
   // verify operation
   if (*((uint64_t*)test_block) != block) {
@@ -57,7 +66,7 @@ int main(void) {
     return 1;
   }
 
-  printf("INFO: test succeeded\n");
+  printf("INFO: test succeeded. Cycles = %lu\n", cycles);
 
   return 0;
 }
