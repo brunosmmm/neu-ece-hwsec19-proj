@@ -18,7 +18,7 @@ rocc_test: libsimon_rocc.so
 	LD_LIBRARY_PATH=. ../riscv-isa-sim/build/spike --extension=simon_rocc ../riscv-pk/build/pk ../lightweight-sw/simon_test_rocc
 
 mmio_test:
-	../riscv-isa-sim/build/spike --extlib=./simon_mmio.so ../riscv-pk/build/pk ../lightweight-sw/simon_test_mmio
+	../riscv-isa-sim/build/spike --extlib=./simon_mmio.so --device=simon_mmio,0x10000000 ../riscv-pk/build/pk ../lightweight-sw/simon_test_mmio
 
 clean:
 	rm -rf *.o *.so
