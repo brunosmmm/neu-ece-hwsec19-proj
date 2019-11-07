@@ -1,0 +1,24 @@
+#+TITLE: Project progress tracking
+
+* Journal
+** <2019-11-06 Wed>
+   Implemented the simon reference implementation as RoCC accelerator in riscv-isa-sim today. Many problems arose
+   due to the now very apparent lack of support for rocc accelerators in the simulator.
+
+   Problems faced:
+   + gcc toolchain does not support custom instructions :: apparently when RISC-V support was upstreamed, support for
+        custom instructions was dropped, so can't do `asm volatile ("custom...")`. Workaround is extremely hacky, build
+        instruction words by hand and bypass the assembler altogether. Was able to get working by using implementation in
+        submodule that was included in the repository.
+   + risc-v pk doesn't like custom instructions :: according to instructions, one had to patch risc-v pk to enable custom
+        instructions extension. I did that, however, I think that this is not necessary. (TODO verify)
+   + extremely awkard to compile rocc as extension :: the scheme is to compile in-tree in the riscv-isa-sim source code.
+        this is extremely annoying. Solved by making a hack where a shared library is compiled. This requires me to compile
+        the ISS with the -fPIC flag, which is apparently very bad. (post on github recommends -fPIC with -fvisibility=protected).
+        Unsure if this is 100% needed (TODO verify)
+
+* To-do list
+** TODO Low-priority [/]
+*** TODO verify if risc-v pk needs patching to work
+*** TODO verify if riscv-isa-sim needs to be compiled with -fPIC
+*** TODO write scripts that build submodules in the correct way
