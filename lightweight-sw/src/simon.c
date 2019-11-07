@@ -6,6 +6,12 @@
 #define SIMON_64_128_ROUNDS 44 // number of rounds
 #define SIMON_64_128_DTYPE uint32_t // use C types for easy handling
 #define SIMON_64_128_DSIZE sizeof(SIMON_64_128_DTYPE) // word size in bytes
+#define SIMON_64_128_KWORDS (16/SIMON_64_128_DSIZE)
+
+#define SIMON_128_128_ROUNDS 68 // number of rounds
+#define SIMON_128_128_DTYPE uint64_t // use C types for easy handling
+#define SIMON_128_128_DSIZE sizeof(SIMON_128_128_DTYPE) // word size in bytes
+#define SIMON_128_128_KWORDS (16/SIMON_128_128_DSIZE)
 
 // internal state flags
 #define SIMON_FLAG_INIT 0x1
@@ -52,6 +58,30 @@ static void _simon_64_128_dec_round(SIMON_64_128_DTYPE round_key,
   *x = tmp;
 }
 
+static void _simon_128_128_enc_round(SIMON_128_128_DTYPE round_key,
+                                     SIMON_128_128_DTYPE *x,
+                                     SIMON_128_128_DTYPE *y) {
+  SIMON_128_128_DTYPE tmp = 0;
+  tmp = *x;
+  *x = *y ^
+       (ROTATE_LEFT(*x, 1, SIMON_128_128_DSIZE) &
+        ROTATE_LEFT(*x, 8, SIMON_128_128_DSIZE)) ^
+       ROTATE_LEFT(*x, 2, SIMON_128_128_DSIZE) ^ round_key;
+  *y = tmp;
+}
+
+static void _simon_128_128_dec_round(SIMON_128_128_DTYPE round_key,
+                                     SIMON_128_128_DTYPE *x,
+                                     SIMON_128_128_DTYPE *y) {
+  SIMON_128_128_DTYPE tmp = 0;
+  tmp = *y;
+  *y = *x ^
+       (ROTATE_LEFT(*y, 1, SIMON_128_128_DSIZE) &
+        ROTATE_LEFT(*y, 8, SIMON_128_128_DSIZE)) ^
+       ROTATE_LEFT(*y, 2, SIMON_128_128_DSIZE) ^ round_key;
+  *x = tmp;
+}
+
 void simon_64_128_initialize(key128_t key) {
   unsigned int i = 0;
   SIMON_64_128_DTYPE kWordTmp = 0;
@@ -62,13 +92,13 @@ void simon_64_128_initialize(key128_t key) {
          (SIMON_64_128_DTYPE*)key, sizeof(key128_t));
 
   // perform key expansion
-  for (i=SIMON_64_128_DSIZE;i<SIMON_64_128_ROUNDS;i++) {
+  for (i=SIMON_64_128_KWORDS;i<SIMON_64_128_ROUNDS;i++) {
     kWordTmp = ROTATE_RIGHT(kWordNative[i-1], 3, SIMON_64_128_DSIZE);
     // key length is 128 bits, so m = 4
     kWordTmp ^= kWordNative[i-3];
     kWordTmp ^= ROTATE_RIGHT(kWordTmp, 1, SIMON_64_128_DSIZE);
-    kWordNative[i] = ~kWordNative[i-SIMON_64_128_DSIZE] ^ kWordTmp
-       ^ ((Z[3] >> ((i-SIMON_64_128_DSIZE)%62)) & 1) ^ 3;
+    kWordNative[i] = ~kWordNative[i-SIMON_64_128_KWORDS] ^ kWordTmp
+       ^ ((Z[3] >> ((i-SIMON_64_128_KWORDS)%62)) & 1) ^ 3;
   }
 
   state.flags = SIMON_FLAG_INIT;
