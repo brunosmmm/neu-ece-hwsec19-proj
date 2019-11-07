@@ -1,5 +1,7 @@
 #include "rocc.h"
+#include <string>
 #include <cstring>
+#include <cstdlib>
 
 // funct field subfields
 #define SIMON_FUNCT_MODE_OFFSET 0
@@ -83,7 +85,9 @@ class crypto_rocc_t : public rocc_t
           }
         } else {
           // illegal mode
-          // illegal_instruction();
+          std::string msg = std::string("illegal mode ") + std::to_string(mode);
+          debug_print(msg);
+          illegal_instruction();
         }
         break;
       }
@@ -288,6 +292,10 @@ private:
 
   uint8_t get_mode(void) {
     return (this->flags & SIMON_INTERNAL_MODE_MASK) >> SIMON_INTERNAL_MODE_OFFSET;
+  }
+
+  void debug_print(std::string str) {
+    fprintf(stderr, "SIMON_ROCC: %s\n", str.c_str());
   }
 
 };
