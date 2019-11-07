@@ -74,6 +74,9 @@ class crypto_rocc_t : public rocc_t
       }
     case FUNC_ENC_ROUND:
       if (!(this->flags & SIMON_FLAG_INITIALIZED)) {
+        std::string msg =
+            std::string("FUNC_ENC_ROUND: acc not initialized");
+        debug_print(msg);
         illegal_instruction();
       } else {
         if (this->get_mode() == SIMON_64_128_MODE) {
@@ -102,6 +105,8 @@ class crypto_rocc_t : public rocc_t
       break;
     case FUNC_DEC_ROUND:
       if (!(this->flags & SIMON_FLAG_INITIALIZED)) {
+        std::string msg = std::string("FUNC_DEC_ROUND: acc not initialized");
+        debug_print(msg);
         illegal_instruction();
       } else {
         if (this->get_mode() == SIMON_64_128_MODE) {
@@ -133,12 +138,16 @@ class crypto_rocc_t : public rocc_t
       break;
     case FUNC_GET_HWORD:
       if (!(this->flags & SIMON_FLAG_INITIALIZED) || (this->get_mode() != SIMON_128_128_MODE)) {
+        std::string msg = std::string("FUNC_GET_HWORD: acc not initialized or not in 128/128 mode");
+        debug_print(msg);
         illegal_instruction();
       } else {
         ret_val = this->tmp_buffer;
       }
       break;
     default:
+      std::string msg = std::string("illegal function: ") + std::to_string(operation);
+      debug_print(msg);
       illegal_instruction();
       break;
     }
