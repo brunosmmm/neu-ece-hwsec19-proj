@@ -1,4 +1,5 @@
 #include "simon.h"
+#include "simon_primitives.h"
 #include "primitives.h"
 #include <string.h>
 
@@ -31,7 +32,10 @@ static const uint64_t Z[5] =
 
 // internal state definition
 typedef struct simon_state_s {
-  SIMON_ROUNDK_DTYPE round_keys[SIMON_MAX_ROUNDS];
+  union {
+    SIMON_64_128_DTYPE k64_128[SIMON_64_128_ROUNDS];
+    SIMON_128_128_DTYPE k128_128[SIMON_128_128_ROUNDS];
+  } round_keys;
   uint8_t flags;
 } SimonState;
 
@@ -86,7 +90,7 @@ void _simon_128_128_dec_round(SIMON_128_128_DTYPE round_key,
 }
 
 void _simon_64_128_key_expansion(key128_t key,
-                                 SIMON_ROUNDK_DTYPE* round_keys) {
+                                 SIMON_64_128_DTYPE* round_keys) {
   unsigned int i = 0;
   SIMON_64_128_DTYPE kWordTmp = 0;
   memcpy(round_keys, (SIMON_64_128_DTYPE*)key,
@@ -126,19 +130,20 @@ static void _initialize_flags(void) {
 void simon_64_128_initialize(key128_t key) {
   // initialize
   memset(&state, 0, sizeof(SimonState));
-  memcpy(state.round_keys,
+  memcpy(state.round_keys.k64_128,
          (SIMON_64_128_DTYPE*)key, sizeof(key128_t));
   // perform key expansion
-  _simon_64_128_key_expansion(key, state.round_keys);
+  _simon_64_128_key_expansion(key, state.round_keys.k64_128);
   _initialize_flags();
 }
 
 void simon_128_128_initialize(key128_t key) {
   // initialize
   memset(&state, 0, sizeof(SimonState));
-  memcpy(state.round_keys, (SIMON_128_128_DTYPE *)key, sizeof(key128_t));
+  memcpy(state.round_keys.k128_128,
+         (SIMON_128_128_DTYPE *)key, sizeof(key128_t));
   // perform key expansion
-  _simon_128_128_key_expansion(key, state.round_keys);
+  _simon_128_128_key_expansion(key, state.round_keys.k128_128);
   _initialize_flags();
 }
 
@@ -153,7 +158,7 @@ int simon_64_128_encrypt(block64_t* input, block64_t* output) {
   y = ((SIMON_64_128_DTYPE*)input)[1];
 
   for (i=0;i<SIMON_64_128_ROUNDS;i++) {
-    _simon_64_128_enc_round(state.round_keys[i], &x, &y);
+    _simon_64_128_enc_round(state.round_keys.k64_128[i], &x, &y);
   }
 
   ((SIMON_64_128_DTYPE*)output)[0] = x;
@@ -172,7 +177,7 @@ int simon_64_128_decrypt(block64_t* input, block64_t* output) {
   y = ((SIMON_64_128_DTYPE *)input)[1];
 
   for (i = SIMON_64_128_ROUNDS; i > 0; i--) {
-    _simon_64_128_dec_round(state.round_keys[i-1], &x, &y);
+    _simon_64_128_dec_round(state.round_keys.k64_128[i-1], &x, &y);
   }
 
   ((SIMON_64_128_DTYPE *)output)[0] = x;
@@ -191,7 +196,7 @@ int simon_128_128_encrypt(block128_t *input, block128_t *output) {
   y = ((SIMON_128_128_DTYPE *)input)[1];
 
   for (i = 0; i < SIMON_128_128_ROUNDS; i++) {
-    _simon_128_128_enc_round(state.round_keys[i], &x, &y);
+    _simon_128_128_enc_round(state.round_keys.k128_128[i], &x, &y);
   }
 
   ((SIMON_128_128_DTYPE *)output)[0] = x;
@@ -210,7 +215,7 @@ int simon_128_128_decrypt(block128_t *input, block128_t *output) {
   y = ((SIMON_128_128_DTYPE *)input)[1];
 
   for (i = SIMON_128_128_ROUNDS; i > 0; i--) {
-    _simon_128_128_dec_round(state.round_keys[i - 1], &x, &y);
+    _simon_128_128_dec_round(state.round_keys.k128_128[i - 1], &x, &y);
   }
 
   ((SIMON_128_128_DTYPE *)output)[0] = x;
