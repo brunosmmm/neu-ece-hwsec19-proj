@@ -83,7 +83,7 @@ class crypto_rocc_t : public rocc_t
           }
         } else {
           // illegal mode
-          illegal_instruction();
+          // illegal_instruction();
         }
         break;
       }
@@ -151,6 +151,7 @@ class crypto_rocc_t : public rocc_t
       break;
     default:
       illegal_instruction();
+      break;
     }
 
     if (this->get_mode() == SIMON_64_128_MODE) {
@@ -292,4 +293,4 @@ private:
 };
 
 
-REGISTER_EXTENSION(crypto_rocc, []() { return new crypto_rocc_t; })
+REGISTER_EXTENSION(simon_rocc, []() { return new crypto_rocc_t; })
