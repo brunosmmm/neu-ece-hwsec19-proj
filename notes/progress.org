@@ -16,9 +16,29 @@
         this is extremely annoying. Solved by making a hack where a shared library is compiled. This requires me to compile
         the ISS with the -fPIC flag, which is apparently very bad. (post on github recommends -fPIC with -fvisibility=protected).
         Unsure if this is 100% needed (TODO verify)
-
+** <2019-11-07 Thu>
+   Abstracted more of the functional simon implementation into a base that is derived for both ROCC and MMIO accelerator usage.
+   implemented a wrapper for MMIO loadable shared library in spike. loading works, but accessing the peripheral does not work
+   due to memory address translation issues. tl;dr risc-v pk doesnt work for physical memory address at all. Tried my best to
+   compile a fully bare metal example of MMIO usage, but it doesn't work at all, generating a write access CPU fault. I don't
+   want to write an assembly example just to verify this thing, however, that might be unavoidable. Due to these pk limitations,
+   I am pretty certain that the same problems will occur when trying to run the RTL emulator. Three possible solutions:
+   + Discover how to compile bare metal example successfully
+   + Write assembly code
+   + Run linux on simulator/emulator (!) and use mmap()
 * To-do list
-** TODO Low-priority [/]
-*** TODO verify if risc-v pk needs patching to work
+** TODO Low-priority [1/3]
+*** DONE verify if risc-v pk needs patching to work
+    CLOSED: [2019-11-07 Thu 15:38]
+    It doesnt.
 *** TODO verify if riscv-isa-sim needs to be compiled with -fPIC
 *** TODO write scripts that build submodules in the correct way
+
+** TODO Project Milestones [1/1]
+   Properly tracked in github repository
+*** DONE Milestone 0
+    CLOSED: [2019-11-07 Thu 15:46]
+*** TODO Milestone 1
+*** TODO Milestone 2
+*** TODO Milestone 3
+*** TODO Milestone 4
