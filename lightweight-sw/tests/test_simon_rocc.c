@@ -1,5 +1,6 @@
 // Test Simon RoCC
 #include <stdint.h>
+#include <stdio.h>
 #include "xcustom.h"
 
 #define ROCC_FUNC_INIT 0
@@ -43,6 +44,8 @@ int main(void) {
   // verify operation
   if (*((uint64_t*)test_block) != block) {
     // fail
+    printf("ERROR: validation failed\n");
+    return 1;
   }
 
   return 0;
