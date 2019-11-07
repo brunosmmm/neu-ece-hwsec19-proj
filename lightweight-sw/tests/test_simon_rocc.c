@@ -51,8 +51,11 @@ int main(void) {
   if (*((uint64_t*)test_block) != block) {
     // fail
     printf("ERROR: validation failed\n");
+    printf("expected: 0x%lx, got 0x%lx\n", *((uint64_t*)test_block), block);
     return 1;
   }
+
+  printf("INFO: test succeeded\n");
 
   return 0;
 }
