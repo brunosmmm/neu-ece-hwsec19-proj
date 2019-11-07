@@ -6,9 +6,9 @@ SRCPATH = src
 TESTPATH = tests
 INCLUDES = include
 INCLUDEFLAGS = -I$(INCLUDES)
-RVINCLUDEFLAGS = -I../rocc-software/src
+RVINCLUDEFLAGS = -I../rocc-software/src -Iinclude
 CFLAGS ?= -Wall -g $(INCLUDEFLAGS)
-RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS)
+RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS) -DRISCV64
 
 all: tests liblightc.a
 
@@ -21,7 +21,7 @@ all: tests liblightc.a
 simon_test_basic: $(TESTPATH)/test_simon.o $(SRCPATH)/simon.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-simon_test_riscv_basic: $(TESTPATH)/test_simon_rocc.rv.o
+simon_test_riscv_basic: $(TESTPATH)/test_simon_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
 speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o $(TESTPATH)/util.o
