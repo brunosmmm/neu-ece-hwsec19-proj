@@ -82,24 +82,31 @@ static void _simon_128_128_dec_round(SIMON_128_128_DTYPE round_key,
   *x = tmp;
 }
 
-void simon_64_128_initialize(key128_t key) {
+static void _simon_64_128_key_expansion(key128_t key,
+                                        SIMON_64_128_DTYPE* round_keys) {
   unsigned int i = 0;
   SIMON_64_128_DTYPE kWordTmp = 0;
-  SIMON_64_128_DTYPE *kWordNative = state.round_keys;
+  memcpy(round_keys, (SIMON_64_128_DTYPE*)key,
+         SIMON_64_128_KWORDS*SIMON_64_128_DSIZE);
+
+  for (i = SIMON_64_128_KWORDS; i < SIMON_64_128_ROUNDS; i++) {
+    kWordTmp = ROTATE_RIGHT(round_keys[i - 1], 3, SIMON_64_128_DSIZE);
+    // key length is 128 bits, so m = 4
+    kWordTmp ^= round_keys[i - 3];
+    kWordTmp ^= ROTATE_RIGHT(kWordTmp, 1, SIMON_64_128_DSIZE);
+    round_keys[i] = ~round_keys[i - SIMON_64_128_KWORDS] ^ kWordTmp ^
+                     ((Z[3] >> ((i - SIMON_64_128_KWORDS) % 62)) & 1) ^ 3;
+  }
+}
+
+void simon_64_128_initialize(key128_t key) {
   // initialize
   memset(&state, 0, sizeof(SimonState));
   memcpy(state.round_keys,
          (SIMON_64_128_DTYPE*)key, sizeof(key128_t));
 
   // perform key expansion
-  for (i=SIMON_64_128_KWORDS;i<SIMON_64_128_ROUNDS;i++) {
-    kWordTmp = ROTATE_RIGHT(kWordNative[i-1], 3, SIMON_64_128_DSIZE);
-    // key length is 128 bits, so m = 4
-    kWordTmp ^= kWordNative[i-3];
-    kWordTmp ^= ROTATE_RIGHT(kWordTmp, 1, SIMON_64_128_DSIZE);
-    kWordNative[i] = ~kWordNative[i-SIMON_64_128_KWORDS] ^ kWordTmp
-       ^ ((Z[3] >> ((i-SIMON_64_128_KWORDS)%62)) & 1) ^ 3;
-  }
+  _simon_64_128_key_expansion(key, state.round_keys);
 
   state.flags = SIMON_FLAG_INIT;
 }
