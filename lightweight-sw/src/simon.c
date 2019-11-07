@@ -4,12 +4,10 @@
 #include <string.h>
 
 // cipher topology
-#define SIMON_64_128_ROUNDS 44 // number of rounds
 #define SIMON_64_128_DTYPE uint32_t // use C types for easy handling
 #define SIMON_64_128_DSIZE sizeof(SIMON_64_128_DTYPE) // word size in bytes
 #define SIMON_64_128_KWORDS (16/SIMON_64_128_DSIZE)
 
-#define SIMON_128_128_ROUNDS 68 // number of rounds
 #define SIMON_128_128_DTYPE uint64_t // use C types for easy handling
 #define SIMON_128_128_DSIZE sizeof(SIMON_128_128_DTYPE) // word size in bytes
 #define SIMON_128_128_KWORDS (16/SIMON_128_128_DSIZE)
