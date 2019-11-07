@@ -21,7 +21,10 @@ all: tests liblightc.a
 simon_test_basic: $(TESTPATH)/test_simon.o $(SRCPATH)/simon.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-simon_test_riscv_basic: $(TESTPATH)/test_simon_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o
+simon_test_rocc: $(TESTPATH)/test_simon_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o
+	$(RVCC) $(RVCFLAGS) -o $@ $^
+
+simon_test_basic_riscv: $(TESTPATH)/test_simon.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/simon.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
 speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o $(TESTPATH)/util.o
@@ -31,7 +34,7 @@ tests_simon: simon_test_basic
 tests_speck: speck_test_basic
 tests: tests_simon tests_speck
 
-tests_simon_riscv: simon_test_riscv_basic
+tests_simon_riscv: simon_test_rocc simon_test_basic_riscv
 tests_riscv: tests_simon_riscv
 
 liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o
