@@ -26,6 +26,14 @@
    + Discover how to compile bare metal example successfully
    + Write assembly code
    + Run linux on simulator/emulator (!) and use mmap()
+** <2019-11-08 Fri>
+   Implemented salsa rocc, works more or less. there is some pointer math wrong somewhere in the implementation, as I get different
+   ciphertexts depending on the architecture that the implementation is run. the algorithm itself is correct since it can encrypt
+   and then decrypt correctly.
+   Started work on RTL version of Simon today. I'm writing verilog because that is what I am used to. It is pretty painful, there is
+   a lot of code to be written, and the fact that I am also writing a dual 64/128 128/128 acc also does not help. Core has been
+   written, need to write wrappers and test. If that works, I'll move to rewriting the accelerators in Chisel due to the way that
+   they are supposed to integrate in chipyard.
 * To-do list
 ** TODO Low-priority [2/3]
 *** DONE verify if risc-v pk needs patching to work
