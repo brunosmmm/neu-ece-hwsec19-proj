@@ -74,6 +74,10 @@ uint8_t _salsa20_encrypt_byte(uint8_t input, uint8_t* key_stream,
   return input ^ k_stream_byte;
 }
 
+uint64_t _salsa20_position(uint32_t* state) {
+  return *((uint64_t*)&state[8]);
+}
+
 void salsa20_init(key256_t key, key64_t nonce) {
   // initialize state vector
   _salsa20_initialize_state((uint32_t*)key, (uint32_t*)nonce,
@@ -84,9 +88,11 @@ void salsa20_init(key256_t key, key64_t nonce) {
 
 void salsa20_encrypt_decrypt(uint8_t* in, uint8_t* out, uint32_t count) {
   unsigned int i = 0;
+  uint64_t cur_pos = 0;
   for (i = 0; i < count; i++) {
     out[i] = _salsa20_encrypt_byte(in[i], state.keyStream, state.stateVector);
-    if (!(i%64) && (i > 0)) {
+    cur_pos = _salsa20_position(state.stateVector);
+    if (!(cur_pos%64) && (cur_pos > 0)) {
       _salsa20_core(state.keyStream, state.stateVector);
     }
   }

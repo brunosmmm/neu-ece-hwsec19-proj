@@ -16,5 +16,6 @@ void _salsa20_qr(uint32_t* a, uint32_t* b, uint32_t*c, uint32_t* d);
 void _salsa20_core(uint8_t *key_stream, uint32_t *state);
 uint8_t _salsa20_encrypt_byte(uint8_t input, uint8_t * key_stream,
                               uint32_t * state);
+uint64_t _salsa20_position(uint32_t *state);
 
 #endif
