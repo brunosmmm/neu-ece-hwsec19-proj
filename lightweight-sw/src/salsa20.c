@@ -1,9 +1,11 @@
 #include "primitives.h"
 #include "salsa20.h"
 #include "salsa20_primitives.h"
+#include <string.h>
 
 typedef struct salsa20_state_s {
   SALSA20_WORD_DTYPE stateVector[SALSA20_STATE_SIZE];
+  uint8_t keyStream[SALSA20_STATE_SIZE*SALSA20_WORD_DSIZE];
 } Salsa20State;
 
 static Salsa20State state;
@@ -34,6 +36,8 @@ void _salsa20_initialize_state(uint32_t* key, uint32_t* nonce,
   state[14] = key[8];
 
   // pos ??
+  state[8] = 0;
+  state[9] = 0;
 }
 
 void _salsa20_qr(uint32_t *a, uint32_t *b, uint32_t *c, uint32_t *d) {
@@ -43,8 +47,47 @@ void _salsa20_qr(uint32_t *a, uint32_t *b, uint32_t *c, uint32_t *d) {
   *a ^= ROTATE_LEFT((*d + *c), 18, SALSA20_WORD_DSIZE);
 }
 
+void _salsa20_core(uint8_t* key_stream, uint32_t* state) {
+  unsigned int i = 0;
+  uint32_t tmp[SALSA20_STATE_SIZE];
+
+  memcpy(tmp, state, SALSA20_STATE_SIZE*sizeof(SALSA20_WORD_DTYPE));
+  for (i = 0; i < SALSA20_ROUNDS; i+=2) {
+    _salsa20_qr(&tmp[0], &tmp[4], &tmp[8], &tmp[12]);
+    _salsa20_qr(&tmp[5], &tmp[9], &tmp[13], &tmp[1]);
+    _salsa20_qr(&tmp[15], &tmp[3], &tmp[7], &tmp[11]);
+    _salsa20_qr(&tmp[0], &tmp[1], &tmp[2], &tmp[3]);
+    _salsa20_qr(&tmp[5], &tmp[6], &tmp[7], &tmp[4]);
+    _salsa20_qr(&tmp[10], &tmp[11], &tmp[8], &tmp[9]);
+    _salsa20_qr(&tmp[15], &tmp[12], &tmp[13], &tmp[14]);
+  }
+  for (i=0; i<16; i++) {
+    ((uint32_t*)key_stream)[i] = tmp[i] + state[i];
+  }
+}
+
+uint8_t _salsa20_encrypt_byte(uint8_t input, uint8_t* key_stream,
+                              uint32_t* state) {
+  uint8_t k_stream_byte = key_stream[*((uint64_t*)(&state[8])) % 64];
+  // increment position counter
+  *((uint64_t*)(&state[8])) += 1;
+  return input ^ k_stream_byte;
+}
+
 void salsa20_init(key256_t key, key64_t nonce) {
   // initialize state vector
   _salsa20_initialize_state((uint32_t*)key, (uint32_t*)nonce,
                             state.stateVector);
+  // run first iteration of core function
+  _salsa20_core(state.keyStream, state.stateVector);
+}
+
+void salsa20_encrypt_decrypt(uint8_t* in, uint8_t* out, uint32_t count) {
+  unsigned int i = 0;
+  for (i = 0; i < count; i++) {
+    out[i] = _salsa20_encrypt_byte(in[i], state.keyStream, state.stateVector);
+    if (!(i%64) && (i > 0)) {
+      _salsa20_core(state.keyStream, state.stateVector);
+    }
+  }
 }

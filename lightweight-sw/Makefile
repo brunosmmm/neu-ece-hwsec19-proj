@@ -36,14 +36,18 @@ simon_test_basic_riscv: $(TESTPATH)/test_simon.rv.o $(SRCPATH)/riscv/rvutil.rv.o
 speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+salsa20_test_basic: $(TESTPATH)/test_salsa20.o $(SRCPATH)/salsa20.o $(TESTPATH)/util.o
+	$(CC) $(CFLAGS) -o $@ $^
+
 tests_simon: simon_test_basic
 tests_speck: speck_test_basic
-tests: tests_simon tests_speck
+tests_salsa20: salsa20_test_basic
+tests: tests_simon tests_speck tests_salsa20
 
 tests_simon_riscv: simon_test_rocc simon_test_mmio simon_test_basic_riscv
 tests_riscv: tests_simon_riscv
 
-liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o
+liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 	$(PREFIX)ar rcs $@ $^
 
 clean:
