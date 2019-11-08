@@ -16,6 +16,7 @@ CIPHER_TESTS := $(foreach cipher,$(CIPHERS),$(cipher)_test_*)
 
 SPIKE_PATH ?= ../riscv-isa-sim/build
 PK_PATH ?= ../riscv-pk/build
+SPIKE_ARGS ?=
 
 all: native_tests riscv_tests liblightc.a
 
@@ -54,7 +55,7 @@ riscv_tests: tests_riscv_simon tests_riscv_salsa20
 
 # run tests in spike riscv isa simulator
 spike_run_%: %_test_basic_riscv
-	$(SPIKE_PATH)/spike $(PK_PATH)/pk $<
+	$(SPIKE_PATH)/spike $(SPIKE_ARGS) $(PK_PATH)/pk $<
 
 clean:
 	rm -rf $(TESTPATH)/*.o $(SRCPATH)/*.o $(CIPHER_TESTS) liblightc.a
