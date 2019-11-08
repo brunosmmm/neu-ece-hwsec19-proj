@@ -20,10 +20,10 @@ lib%_rocc.so: %_rocc.o %_base.o $(REF_IMPL_PATH)/src/%.o
 %_mmio.so: $(REF_IMPL_PATH)/src/simon.o %_mmio.o %_base.o
 	$(CXX) -fPIC -shared -o $@ $^
 
-%_rocc_test: lib%_rocc.so $(REF_IMPL_PATH)/$(*F)_test_rocc
+%_rocc_test: lib%_rocc.so
 	LD_LIBRARY_PATH=. $(SPIKE_PATH)/spike --extension=$(*F)_rocc $(PK_PATH)/pk $(REF_IMPL_PATH)/$(*F)_test_rocc
 
-%_mmio_test: %_mmio.so $(REF_IMPL_PATH)/$(*F)_test_mmio
+%_mmio_test: %_mmio.so
 	$(SPIKE_PATH)/spike --extlib=./$(*F)_mmio.so --device=$(*F)_mmio,0x10000000 $(REF_IMPL_PATH)/$(*F)_test_mmio
 
 clean:
