@@ -13,14 +13,17 @@ module simon_kexp
     parameter integer SIMON_KEY_WIDTH = 128
     )
   (
-   input                       mode,
-   input [SIMON_KEY_WIDTH-1:0] key,
-   input                       k_valid,
-   output                      k_ready,
-   output                      exp_valid,
-   input                       ck,
-   input                       nrst
+   input                             mode,
+   input [SIMON_KEY_WIDTH-1:0]       key,
+   input                             k_valid,
+   output                            k_ready,
+   output [SIMON_MAX_WORD_WIDTH-1:0] exp [0:SIMON_MAX_ROUNDS-1],
+   output                            exp_valid,
+   input                             ck,
+   input                             nrst
    );
+
+   assign exp = xKey;
 
    localparam [63:0] Z_64_128 = 64'b0011001101101001111110001000010100011001001011000000111011110101;
    localparam [63:0] Z_128_128 = 64'b0011110000101100111001010001001000000111101001100011010111011011;
