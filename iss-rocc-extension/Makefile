@@ -7,7 +7,6 @@ ISA_SIM_INCLUDE =../riscv-isa-sim/riscv ../riscv-isa-sim/softfloat ../riscv-isa-
 INCLUDE_FLAGS=$(ISA_SIM_INCLUDE:%=-I%)
 CFLAGS ?=-Wall -g
 
-
 all: libsimon_rocc.so simon_mmio.so
 
 %.o: %.cc
@@ -21,10 +20,10 @@ lib%_rocc.so: %_rocc.o %_base.o $(REF_IMPL_PATH)/src/%.o
 %_mmio.so: $(REF_IMPL_PATH)/src/simon.o %_mmio.o %_base.o
 	$(CXX) -fPIC -shared -o $@ $^
 
-%_rocc_test: lib%_rocc.so
+%_rocc_test: lib%_rocc.so $(REF_IMPL_PATH)/$(*F)_test_rocc
 	LD_LIBRARY_PATH=. $(SPIKE_PATH)/spike --extension=$(*F)_rocc $(PK_PATH)/pk $(REF_IMPL_PATH)/$(*F)_test_rocc
 
-%_mmio_test:
+%_mmio_test: %_mmio.so $(REF_IMPL_PATH)/$(*F)_test_mmio
 	$(SPIKE_PATH)/spike --extlib=./$(*F)_mmio.so --device=$(*F)_mmio,0x10000000 $(REF_IMPL_PATH)/$(*F)_test_mmio
 
 clean:
