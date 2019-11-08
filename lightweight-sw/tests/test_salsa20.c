@@ -2,6 +2,10 @@
 #include "util.h"
 #include <stdint.h>
 
+#ifdef RISCV64
+#include "riscv/rvutil.h"
+#endif
+
 static key256_t test_key =
   {
    0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA, 0x42, 0x00,
@@ -21,6 +25,10 @@ int main(void) {
   unsigned int i = 0;
   block64_t tmp, cipher, out;
 
+#ifdef RISCV64
+  uint64_t rv64_cycles = rv64_get_cycles();
+#endif
+
   // initialize
   salsa20_init(test_key, test_nonce);
 
@@ -33,6 +41,10 @@ int main(void) {
   // decrypt (must re-initialize)
   salsa20_init(test_key, test_nonce);
   salsa20_encrypt_decrypt((uint8_t*)tmp, (uint8_t*)out, 8);
+
+#ifdef RISCV64
+  rv64_cycles = rv64_get_cycles() - rv64_cycles;
+#endif
 
   // display ciphertext
   print_bytes((uint8_t *)cipher, sizeof(block64_t));
@@ -47,6 +59,9 @@ int main(void) {
       return 1;
     }
   }
-
+#ifdef RISCV64
+  printf("INFO: test succeded. Cycles = %lu\n", rv64_cycles);
+#else
   printf("INFO: test succeeded\n");
+#endif
 }
