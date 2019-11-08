@@ -19,7 +19,7 @@ void salsa20_base_hwacc::setkey_low(uint64_t kw2, uint64_t kw1) {
   *((uint64_t *)&this->state[1]) = kw1;
 }
 
-void salsa20_base_hwacc::setnonce(uint64_t nonce) {
+void salsa20_base_hwacc::set_nonce(uint64_t nonce) {
   *((uint64_t *)&this->state[6]) = nonce;
 }
 
@@ -31,6 +31,20 @@ void salsa20_base_hwacc::reset_pos(void) {
   *((uint64_t *)&this->state[8]) = 0;
 }
 
+uint64_t salsa20_base_hwacc::get_pos(void) {
+  return *((uint64_t*)&this->state[8]);
+}
+
 void salsa20_base_hwacc::refresh_stream(void) {
   _salsa20_core((uint8_t*)this->key_stream, this->state);
+}
+
+void salsa20_base_hwacc::encrypt_decrypt(uint8_t* in, uint8_t* out, uint32_t count) {
+  unsigned int i = 0;
+  for (i = 0; i < count; i++) {
+    if (!(this->get_pos() % 64)) {
+      _salsa20_core((uint8_t *)this->key_stream, this->state);
+    }
+    out[i] = _salsa20_encrypt_byte(in[i], (uint8_t*)this->key_stream, this->state);
+  }
 }
