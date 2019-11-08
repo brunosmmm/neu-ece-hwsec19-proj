@@ -1,6 +1,6 @@
 [submodule "riscv-isa-sim"]
 	path = riscv-isa-sim
-	url = git@github.com:brunosmmm/riscv-isa-sim.git
+	url = https://github.com/brunosmmm/riscv-isa-sim.git
 [submodule "rocc-software"]
 	path = rocc-software
 	url = https://github.com/IBM/rocc-software.git
