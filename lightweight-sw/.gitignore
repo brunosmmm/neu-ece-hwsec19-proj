@@ -2,4 +2,5 @@
 *.a
 speck_test_*
 simon_test_*
+salsa20_test_*
 .gdb_history
