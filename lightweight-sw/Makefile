@@ -57,6 +57,6 @@ spike_run_%: %_test_basic_riscv
 	$(SPIKE_PATH)/spike $(PK_PATH)/pk $<
 
 clean:
-	rm -rf $(TESTPATH)/*.o $(SRCPATH)/*.o $(CIPHER_NATIVE_TESTS) liblightc.a
+	rm -rf $(TESTPATH)/*.o $(SRCPATH)/*.o $(CIPHER_TESTS) liblightc.a
 
 .PHONY: clean
