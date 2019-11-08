@@ -52,13 +52,13 @@ int main(void) {
   rv64_cycles = rv64_get_cycles() - rv64_cycles;
 
   // display ciphertext
-  print_bytes((uint8_t *)cipher, sizeof(block64_t));
+  print_bytes((uint8_t *)&cipher, sizeof(block64_t));
 
   // display plaintext
-  print_bytes((uint8_t *)tmp, sizeof(block64_t));
+  print_bytes((uint8_t *)&tmp, sizeof(block64_t));
 
   for (i = 0; i < sizeof(block64_t); i++) {
-    if (((uint8_t *)test_block)[i] != ((uint8_t *)tmp)[i]) {
+    if (((uint8_t *)test_block)[i] != ((uint8_t *)&tmp)[i]) {
       // incorrect value!
       printf("ERROR: decrypted block does not match original plaintext\n");
       return 1;
