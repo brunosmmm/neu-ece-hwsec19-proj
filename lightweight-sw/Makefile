@@ -11,7 +11,10 @@ CFLAGS ?= -Wall -g $(INCLUDEFLAGS)
 RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS) -DRISCV64
 RVDEBUGPATH = ../riscv-tests/debug/
 
-all: tests liblightc.a
+CIPHERS ?= simon salsa20 speck
+CIPHER_TESTS := $(foreach cipher,$(CIPHERS),$(cipher)_test_*)
+
+all: native_tests riscv_tests liblightc.a
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -19,38 +22,34 @@ all: tests liblightc.a
 %.rv.o: %.c
 	$(RVCC) $(RVCFLAGS) -c $< -o $@
 
-simon_test_basic: $(TESTPATH)/test_simon.o $(SRCPATH)/simon.o $(TESTPATH)/util.o
+%_test_basic: $(TESTPATH)/test_%.o $(SRCPATH)/%.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-simon_test_rocc: $(TESTPATH)/test_simon_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o
+%_test_rocc: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-simon_test_mmio: $(TESTPATH)/test_simon_mmio.c $(SRCPATH)/riscv/rvutil.c $(RVDEBUGPATH)/programs/entry.S $(RVDEBUGPATH)/programs/init.c
+%_test_mmio: $(TESTPATH)/test_%_mmio.c $(SRCPATH)/riscv/rvutil.c $(RVDEBUGPATH)/programs/entry.S $(RVDEBUGPATH)/programs/init.c
 	$(RVCC) $(RVCFLAGS) -march=rv64imac -mabi=lp64 $^ -DNHARTS=1 \
 	-T $(RVDEBUGPATH)/targets/RISC-V/spike64.lds \
 	-nostartfiles -mcmodel=medany -DXLEN=64 -o $@
 
-simon_test_basic_riscv: $(TESTPATH)/test_simon.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/simon.rv.o
+%_test_basic_riscv: $(TESTPATH)/test_%.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/%.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-speck_test_basic: $(TESTPATH)/test_speck.o $(SRCPATH)/speck.o $(TESTPATH)/util.o
-	$(CC) $(CFLAGS) -o $@ $^
+tests_native_simon: simon_test_basic
+tests_native_salsa20: salsa20_test_basic
+tests_native_speck: speck_test_basic
 
-salsa20_test_basic: $(TESTPATH)/test_salsa20.o $(SRCPATH)/salsa20.o $(TESTPATH)/util.o
-	$(CC) $(CFLAGS) -o $@ $^
+tests_riscv_simon: simon_test_rocc simon_test_mmio simon_test_basic_riscv
+tests_riscv_salsa20: salsa20_test_basic_riscv
 
-tests_simon: simon_test_basic
-tests_speck: speck_test_basic
-tests_salsa20: salsa20_test_basic
-tests: tests_simon tests_speck tests_salsa20
-
-tests_simon_riscv: simon_test_rocc simon_test_mmio simon_test_basic_riscv
-tests_riscv: tests_simon_riscv
+native_tests: tests_native_simon tests_native_speck tests_native_salsa20
+riscv_tests: tests_riscv_simon tests_riscv_salsa20
 
 liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 	$(PREFIX)ar rcs $@ $^
 
 clean:
-	rm -rf $(TESTPATH)/*.o $(SRCPATH)/*.o speck_test_* simon_test_* liblightc.a
+	rm -rf $(TESTPATH)/*.o $(SRCPATH)/*.o $(CIPHER_NATIVE_TESTS) liblightc.a
 
 .PHONY: clean
