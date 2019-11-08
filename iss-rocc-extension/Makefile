@@ -14,11 +14,11 @@ all: libsimon_rocc.so simon_mmio.so
 
 # rocc accelerator targets
 lib%_rocc.so: %_rocc.o %_base.o $(REF_IMPL_PATH)/src/%.o
-	$(CXX) -fPIC -shared  -o $@ $^  -Wl,--no-whole-archive "$(SPIKE_PATH)/libriscv.a"
+	$(CXX) -shared  -o $@ $^ -Wl,--no-whole-archive "$(SPIKE_PATH)/libriscv.a"
 
 # mmio accelerator targets
 %_mmio.so: $(REF_IMPL_PATH)/src/simon.o %_mmio.o %_base.o
-	$(CXX) -fPIC -shared -o $@ $^
+	$(CXX) -shared -o $@ $^
 
 %_rocc_test: lib%_rocc.so
 	LD_LIBRARY_PATH=. $(SPIKE_PATH)/spike --extension=$(*F)_rocc $(PK_PATH)/pk $(REF_IMPL_PATH)/$(*F)_test_rocc
