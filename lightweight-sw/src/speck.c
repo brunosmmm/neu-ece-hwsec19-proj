@@ -20,41 +20,46 @@ typedef struct speck_state_s {
 // internal state
 static SpeckState state;
 
+
 static void _speck_64_128_enc_round(SPECK_64_128_DTYPE round_key,
                                     SPECK_64_128_DTYPE* x,
                                     SPECK_64_128_DTYPE* y) {
   *x = (ROTATE_RIGHT(*x, SPECK_64_128_ALPHA, SPECK_64_128_DSIZE) + *y)
     ^ round_key;
-  *y = ROTATE_LEFT(*y, SPECK_64_128_BETA, SPECK_64_128_DSIZE) ^
-    (ROTATE_RIGHT(*x, SPECK_64_128_ALPHA, SPECK_64_128_DSIZE) + *y) ^ round_key;
+  *y = ROTATE_LEFT(*y, SPECK_64_128_BETA, SPECK_64_128_DSIZE) ^ *x;
 }
 
 static void _speck_64_128_dec_round(SPECK_64_128_DTYPE round_key,
                                     SPECK_64_128_DTYPE *x,
                                     SPECK_64_128_DTYPE *y) {
-  *x = (ROTATE_LEFT((*x^round_key), SPECK_64_128_ALPHA, SPECK_64_128_DSIZE)
-               + ROTATE_RIGHT((*x^*y), SPECK_64_128_BETA, SPECK_64_128_DSIZE));
+
   *y = ROTATE_RIGHT((*x^*y), SPECK_64_128_BETA, SPECK_64_128_DSIZE);
+  *x = ROTATE_LEFT(((*x ^ round_key) - *y), SPECK_64_128_ALPHA,
+                   SPECK_64_128_DSIZE);
 }
 
 void speck_64_128_initialize(key128_t key) {
   unsigned int i = 0;
   SPECK_64_128_DTYPE l[SPECK_64_128_ROUNDS+SPECK_64_128_DSIZE-2];
-  SPECK_64_128_DTYPE tmp;
 
   // initialize
   memset(&state, 0, sizeof(SpeckState));
   // set initial key words
   memset(l, 0, SPECK_64_128_DSIZE*(SPECK_64_128_ROUNDS+SPECK_64_128_DSIZE-2));
-  memcpy(l, (SPECK_64_128_DTYPE*)key+1,
+  memcpy(l, ((SPECK_64_128_DTYPE*)key)+1,
          sizeof(key128_t)-sizeof(SPECK_64_128_DTYPE));
   state.round_keys[0] = ((SPECK_64_128_DTYPE*)key)[0];
 
   // key expansion
   for (i=0; i<SPECK_64_128_ROUNDS-1; i++) {
-    tmp = l[i];
-    _speck_64_128_enc_round(i, &tmp, &state.round_keys[i]);
-    l[i+SPECK_64_128_DSIZE-1] = tmp;
+    l[i+SPECK_64_128_DSIZE-1] = (state.round_keys[i] +
+                                 ROTATE_RIGHT(l[i],
+                                              SPECK_64_128_ALPHA,
+                                              SPECK_64_128_DSIZE)) ^ i;
+    state.round_keys[i+1] = ROTATE_LEFT(state.round_keys[i],
+                                        SPECK_64_128_BETA,
+                                        SPECK_64_128_DSIZE) ^
+      l[i+SPECK_64_128_DSIZE-1];
   }
   state.flags = SPECK_FLAG_INIT;
 }
