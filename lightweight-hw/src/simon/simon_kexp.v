@@ -87,7 +87,6 @@ module simon_kexp
 
    // internal flags and logic
    wire                               kexp_start;
-   reg                                round_busy;
    reg [1:0]                          kexp_state;
    reg                                kexp_phase;
    reg [16:0]                         kexp_pending;
@@ -161,14 +160,6 @@ module simon_kexp
               end // else: !if(!kexp_pending)
            end // case: `KEXP_STATE_EXP
          endcase // case (kexp_state)
-      end
-   end
-
-   always @(posedge ck) begin
-      if (!nrst) begin
-         round_busy <= '0;
-      end
-      else begin
       end
    end
 
