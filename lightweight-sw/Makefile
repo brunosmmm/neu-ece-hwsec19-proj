@@ -31,7 +31,7 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 %_test_basic: $(TESTPATH)/test_%.o $(SRCPATH)/%.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-%_test_rocc: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o
+%_test_rocc: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
 %_test_mmio: $(TESTPATH)/test_%_mmio.c $(SRCPATH)/riscv/rvutil.c $(RVDEBUGPATH)/programs/entry.S $(RVDEBUGPATH)/programs/init.c
@@ -47,7 +47,7 @@ tests_native_salsa20: salsa20_test_basic
 tests_native_speck: speck_test_basic
 
 tests_riscv_simon: simon_test_rocc simon_test_mmio simon_test_basic_riscv
-tests_riscv_salsa20: salsa20_test_basic_riscv
+tests_riscv_salsa20: salsa20_test_basic_riscv salsa20_test_rocc
 
 native_tests: tests_native_simon tests_native_speck tests_native_salsa20
 riscv_tests: tests_riscv_simon tests_riscv_salsa20
