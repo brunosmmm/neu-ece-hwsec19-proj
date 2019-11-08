@@ -22,18 +22,18 @@ void _salsa20_initialize_state(uint32_t* key, uint32_t* nonce,
   state[15] = _salsa20_cons[3];
 
   // nonce
-  state[6] = nonce[0];
-  state[7] = nonce[1];
+  state[6] = nonce ? nonce[0] : 0;
+  state[7] = nonce ? nonce[1] : 0;
 
   // key
-  state[1] = key[1];
-  state[2] = key[2];
-  state[3] = key[3];
-  state[4] = key[4];
-  state[11] = key[5];
-  state[12] = key[6];
-  state[13] = key[7];
-  state[14] = key[8];
+  state[1] = key ? key[1] : 0;
+  state[2] = key ? key[2] : 0;
+  state[3] = key ? key[3] : 0;
+  state[4] = key ? key[4] : 0;
+  state[11] = key ? key[5] : 0;
+  state[12] = key ? key[6] : 0;
+  state[13] = key ? key[7] : 0;
+  state[14] = key ? key[8] : 0;
 
   // pos ??
   state[8] = 0;
