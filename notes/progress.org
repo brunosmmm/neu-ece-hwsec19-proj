@@ -27,11 +27,13 @@
    + Write assembly code
    + Run linux on simulator/emulator (!) and use mmap()
 * To-do list
-** TODO Low-priority [1/3]
+** TODO Low-priority [2/3]
 *** DONE verify if risc-v pk needs patching to work
     CLOSED: [2019-11-07 Thu 15:38]
     It doesnt.
-*** TODO verify if riscv-isa-sim needs to be compiled with -fPIC
+*** DONE verify if riscv-isa-sim needs to be compiled with -fPIC
+    CLOSED: [2019-11-08 Fri 10:39]
+    This is necessary. I'm not investigating the right way to do it, rocc ext libraries simply wont work withouth this hack
 *** TODO write scripts that build submodules in the correct way
 
 ** TODO Project Milestones [1/1]
