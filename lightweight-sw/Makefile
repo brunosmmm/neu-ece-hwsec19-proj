@@ -20,7 +20,7 @@ PK_PATH ?= ../riscv-pk/build
 all: native_tests riscv_tests liblightc.a
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
 %.rv.o: %.c
 	$(RVCC) $(RVCFLAGS) -c $< -o $@
