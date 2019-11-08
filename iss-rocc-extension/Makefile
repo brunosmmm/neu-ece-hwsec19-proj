@@ -7,7 +7,7 @@ ISA_SIM_INCLUDE =../riscv-isa-sim/riscv ../riscv-isa-sim/softfloat ../riscv-isa-
 INCLUDE_FLAGS=$(ISA_SIM_INCLUDE:%=-I%)
 CFLAGS ?=-Wall -g
 
-all: libsimon_rocc.so simon_mmio.so
+all: libsimon_rocc.so simon_mmio.so libsalsa20_rocc.so
 
 %.o: %.cc
 	$(CXX) $(CFLAGS) $(INCLUDE_FLAGS) -fPIC -c $< -o $@
