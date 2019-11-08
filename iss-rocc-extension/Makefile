@@ -1,24 +1,31 @@
 CXX ?=g++
-ISA_SIM_INCLUDE =../riscv-isa-sim/riscv ../riscv-isa-sim/softfloat ../riscv-isa-sim/build ../lightweight-sw/include
+
+REF_IMPL_PATH ?= ../lightweight-sw
+SPIKE_PATH ?= ../riscv-isa-sim/build
+PK_PATH ?= ../riscv-pk/build
+ISA_SIM_INCLUDE =../riscv-isa-sim/riscv ../riscv-isa-sim/softfloat ../riscv-isa-sim/build $(REF_IMPL_PATH)/include
 INCLUDE_FLAGS=$(ISA_SIM_INCLUDE:%=-I%)
 CFLAGS ?=-Wall -g
+
 
 all: libsimon_rocc.so simon_mmio.so
 
 %.o: %.cc
 	$(CXX) $(CFLAGS) $(INCLUDE_FLAGS) -fPIC -c $< -o $@
 
-libsimon_rocc.so: simon_rocc.o simon_base.o ../lightweight-sw/src/simon.o
-	$(CXX) -fPIC -shared  -o $@ $^  -Wl,--no-whole-archive "../riscv-isa-sim/build/libriscv.a"
+# rocc accelerator targets
+lib%_rocc.so: %_rocc.o %_base.o $(REF_IMPL_PATH)/src/%.o
+	$(CXX) -fPIC -shared  -o $@ $^  -Wl,--no-whole-archive "$(SPIKE_PATH)/libriscv.a"
 
-simon_mmio.so: ../lightweight-sw/src/simon.o simon_mmio.o simon_base.o
+# mmio accelerator targets
+%_mmio.so: $(REF_IMPL_PATH)/src/simon.o %_mmio.o %_base.o
 	$(CXX) -fPIC -shared -o $@ $^
 
-rocc_test: libsimon_rocc.so
-	LD_LIBRARY_PATH=. ../riscv-isa-sim/build/spike --extension=simon_rocc ../riscv-pk/build/pk ../lightweight-sw/simon_test_rocc
+%_rocc_test: lib%_rocc.so
+	LD_LIBRARY_PATH=. $(SPIKE_PATH)/spike --extension=$(*F)_rocc $(PK_PATH)/pk $(REF_IMPL_PATH)/$(*F)_test_rocc
 
-mmio_test:
-	../riscv-isa-sim/build/spike --extlib=./simon_mmio.so --device=simon_mmio,0x10000000 ../lightweight-sw/simon_test_mmio
+%_mmio_test:
+	$(SPIKE_PATH)/spike --extlib=./$(*F)_mmio.so --device=$(*F)_mmio,0x10000000 $(REF_IMPL_PATH)/$(*F)_test_mmio
 
 clean:
 	rm -rf *.o *.so
