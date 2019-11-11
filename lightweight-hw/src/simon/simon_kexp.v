@@ -30,7 +30,6 @@ module simon_kexp
 
    // registers for expanded key
    reg [SIMON_MAX_WORD_WIDTH-1:0] xKey [0:SIMON_MAX_ROUNDS-1];
-   reg [REGISTER_WIDTH-1:0]       flags;
 
    // rotation units
    reg [`SIMON_64_128_WORD_SIZE-1:0] rr3_64in;
@@ -89,7 +88,6 @@ module simon_kexp
 
 
    // internal flags and logic
-   wire                               kexp_start;
    reg [1:0]                          kexp_state;
    reg                                kexp_phase;
    reg [16:0]                         kexp_pending;
@@ -136,7 +134,7 @@ module simon_kexp
               else begin
                  if (kexp_phase) begin
                     // next round's shifted word
-                    if (mode == `SIMON_MODE_64_128) begin
+                    if (cur_mode == `SIMON_MODE_64_128) begin
                        rr1_64in <= rr3_64out ^ xKey[`SIMON_64_128_ROUNDS-kexp_pending-3][31:0];
                        rr3_64in <= xKey[`SIMON_64_128_ROUNDS-kexp_pending-1][31:0];
                     end
@@ -147,7 +145,7 @@ module simon_kexp
                     kexp_phase <= '1;
                  end // if (kexp_phase)
                  else begin
-                    if (mode == `SIMON_MODE_64_128) begin
+                    if (cur_mode == `SIMON_MODE_64_128) begin
                        xKey[`SIMON_64_128_ROUNDS-kexp_pending] <= {32'b0,
                           ~xKey[`SIMON_64_128_ROUNDS-kexp_pending-`SIMON_64_128_KEY_WORDS][31:0] ^ rr1_64out ^
                           {31'b0, Z_64_128[(`SIMON_64_128_ROUNDS-kexp_pending-`SIMON_64_128_KEY_WORDS)%62]} ^ 32'd3};
