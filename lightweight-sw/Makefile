@@ -32,6 +32,9 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 %_test_basic: $(TESTPATH)/test_%.o $(SRCPATH)/%.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+%_test_state: $(TESTPATH)/test_%_state.o $(SRCPATH)/%.o $(TESTPATH)/util.o
+	$(CC) $(CFLAGS) -o $@ $^
+
 %_test_rocc: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
