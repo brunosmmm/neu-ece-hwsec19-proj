@@ -10,3 +10,6 @@
 [submodule "riscv-tests"]
 	path = riscv-tests
 	url = https://github.com/riscv/riscv-tests.git
+[submodule "lightweight-hw/chisel/simon"]
+	path = lightweight-hw/chisel/simon
+	url = https://github.com/brunosmmm/simon-chisel.git
