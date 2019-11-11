@@ -114,7 +114,7 @@ module simon_kexp
          rr3_128in <= 0;
          rr1_128in <= 0;
          for (i = 0; i < SIMON_MAX_ROUNDS; i += 1) begin
-            xKey[i] <= 0;
+            xKey[i] = 0;
          end
       end
       else begin
@@ -158,7 +158,7 @@ module simon_kexp
                  else begin
                     if (cur_mode == `SIMON_MODE_64_128) begin
                        xKey[`SIMON_64_128_ROUNDS-kexp_pending] <= xKey64_value;
-                       rr3_64in <= xKey64_value;
+                       rr3_64in <= xKey64_value[31:0];
                     end
                     else begin
                        xKey[`SIMON_128_128_ROUNDS-kexp_pending] <= xKey128_value;
