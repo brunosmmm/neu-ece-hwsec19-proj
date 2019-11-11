@@ -17,13 +17,13 @@ module simon_kexp
    input [SIMON_KEY_WIDTH-1:0]       key,
    input                             k_valid,
    output                            k_ready,
-   output [SIMON_MAX_WORD_WIDTH-1:0] exp [0:SIMON_MAX_ROUNDS-1],
+   output [SIMON_MAX_WORD_WIDTH-1:0] expanded [0:SIMON_MAX_ROUNDS-1],
    output                            exp_valid,
    input                             ck,
    input                             nrst
    );
 
-   assign exp = xKey;
+   assign expanded = xKey;
 
    localparam [63:0] Z_64_128 = 64'b0011001101101001111110001000010100011001001011000000111011110101;
    localparam [63:0] Z_128_128 = 64'b0011110000101100111001010001001000000111101001100011010111011011;
@@ -96,6 +96,7 @@ module simon_kexp
    assign k_ready = (kexp_state == `KEXP_STATE_IDLE);
 
    // key expander logic
+   integer                             i;
    always @(posedge ck) begin
       if (!nrst) begin
          kexp_state <= `KEXP_STATE_IDLE;
@@ -104,6 +105,9 @@ module simon_kexp
          rr1_64in <= 0;
          rr3_128in <= 0;
          rr1_128in <= 0;
+         for (i = 0; i < SIMON_MAX_ROUNDS; i += 1) begin
+            xKey[i] <= 0;
+         end
       end
       else begin
          case (kexp_state)
