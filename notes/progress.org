@@ -34,15 +34,18 @@
    a lot of code to be written, and the fact that I am also writing a dual 64/128 128/128 acc also does not help. Core has been
    written, need to write wrappers and test. If that works, I'll move to rewriting the accelerators in Chisel due to the way that
    they are supposed to integrate in chipyard.
+** <2019-11-11 Mon>
+   Finished implementation of Simon in verilog.
 * To-do list
-** TODO Low-priority [2/3]
+** TODO Low-priority [3/3]
 *** DONE verify if risc-v pk needs patching to work
     CLOSED: [2019-11-07 Thu 15:38]
     It doesnt.
 *** DONE verify if riscv-isa-sim needs to be compiled with -fPIC
     CLOSED: [2019-11-08 Fri 10:39]
     This is necessary. I'm not investigating the right way to do it, rocc ext libraries simply wont work withouth this hack
-*** TODO write scripts that build submodules in the correct way
+*** DONE write scripts that build submodules in the correct way
+    CLOSED: [2019-11-11 Mon 16:40]
 
 ** TODO Project Milestones [1/1]
    Properly tracked in github repository
