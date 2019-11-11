@@ -25,8 +25,8 @@ module simon_kexp
 
    assign expanded = xKey;
 
-   localparam [63:0] Z_64_128 = 64'b0011001101101001111110001000010100011001001011000000111011110101;
-   localparam [63:0] Z_128_128 = 64'b0011110000101100111001010001001000000111101001100011010111011011;
+   localparam [63:0] Z_64_128 = 64'b0011110000101100111001010001001000000111101001100011010111011011;
+   localparam [63:0] Z_128_128 = 64'b0011001101101001111110001000010100011001001011000000111011110101;
 
    // registers for expanded key
    reg [SIMON_MAX_WORD_WIDTH-1:0] xKey [0:SIMON_MAX_ROUNDS-1];
@@ -96,6 +96,14 @@ module simon_kexp
    assign k_ready = (kexp_state == `KEXP_STATE_IDLE);
 
    // key expander logic
+   wire [`SIMON_128_128_WORD_SIZE-1: 0] xKey64_value;
+   wire [`SIMON_128_128_WORD_SIZE-1: 0] xKey128_value;
+   assign xKey64_value = {32'b0,
+                          ~xKey[`SIMON_64_128_ROUNDS-kexp_pending-`SIMON_64_128_KEY_WORDS][31:0] ^ rr1_64out ^ rr1_64in ^
+                          {31'b0, Z_64_128[(`SIMON_64_128_ROUNDS-kexp_pending-`SIMON_64_128_KEY_WORDS)%62]} ^ 32'd3};
+   assign xKey128_value = ~xKey[`SIMON_128_128_ROUNDS-kexp_pending-`SIMON_128_128_KEY_WORDS] ^ rr1_128out ^ rr1_128in ^
+                          {63'b0,Z_128_128[(`SIMON_128_128_ROUNDS-kexp_pending-`SIMON_128_128_KEY_WORDS)%62]} ^ 64'd3;
+
    integer                             i;
    always @(posedge ck) begin
       if (!nrst) begin
@@ -141,24 +149,20 @@ module simon_kexp
                     // next round's shifted word
                     if (cur_mode == `SIMON_MODE_64_128) begin
                        rr1_64in <= rr3_64out ^ xKey[`SIMON_64_128_ROUNDS-kexp_pending-3][31:0];
-                       rr3_64in <= xKey[`SIMON_64_128_ROUNDS-kexp_pending-1][31:0];
                     end
                     else begin
                        rr1_128in <= rr3_128out ^ xKey[`SIMON_128_128_ROUNDS-kexp_pending-3];
-                       rr3_128in <= xKey[`SIMON_128_128_ROUNDS-kexp_pending-1];
                     end
                     kexp_phase <= '1;
                  end // if (kexp_phase)
                  else begin
                     if (cur_mode == `SIMON_MODE_64_128) begin
-                       xKey[`SIMON_64_128_ROUNDS-kexp_pending] <= {32'b0,
-                          ~xKey[`SIMON_64_128_ROUNDS-kexp_pending-`SIMON_64_128_KEY_WORDS][31:0] ^ rr1_64out ^
-                          {31'b0, Z_64_128[(`SIMON_64_128_ROUNDS-kexp_pending-`SIMON_64_128_KEY_WORDS)%62]} ^ 32'd3};
+                       xKey[`SIMON_64_128_ROUNDS-kexp_pending] <= xKey64_value;
+                       rr3_64in <= xKey64_value;
                     end
                     else begin
-                       xKey[`SIMON_128_128_ROUNDS-kexp_pending] <=
-                          ~xKey[`SIMON_128_128_ROUNDS-kexp_pending-`SIMON_128_128_KEY_WORDS] ^ rr1_128out ^
-                          {63'b0,Z_128_128[(`SIMON_128_128_ROUNDS-kexp_pending-`SIMON_128_128_KEY_WORDS)%62]} ^ 64'd3;
+                       xKey[`SIMON_128_128_ROUNDS-kexp_pending] <= xKey128_value;
+                       rr3_128in <= xKey128_value;
                     end
                     kexp_phase <= '0;
                     kexp_pending <= kexp_pending - 1;
