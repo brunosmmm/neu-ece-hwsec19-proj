@@ -122,6 +122,9 @@ module simon_round
          i_ready <= '1;
          busy <= '0;
          tmp <= '0;
+         rl1_64in <= 0;
+         rl2_64in <= 0;
+         rl8_64in <= 0;
       end
       else begin
          if (i_valid && !busy) begin
@@ -130,7 +133,7 @@ module simon_round
             enc_dec_mode <= enc_dec;
             simon_mode <= mode;
             // precalculate some stuff
-            tmp <= key ^ xin;
+            tmp <= key ^ yin;
             if (mode == `SIMON_MODE_64_128) begin
                rl1_64in <= xin[31:0];
                rl2_64in <= xin[31:0];
@@ -159,6 +162,9 @@ module simon_round
                else begin
                   block2_out <= out;
                end
+            end
+            else begin
+               o_valid <= '0;
             end
          end // else: !if(i_valid && !busy)
       end // else: !if(!nrst)

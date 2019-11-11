@@ -4,6 +4,7 @@
 `define SIM_STATE_START 0
 `define SIM_STATE_WAIT_READY 1
 `define SIM_STATE_WAIT_DONE 2
+`define SIM_STATE_ENCRYPT 3
 
 module coretb();
 
@@ -29,10 +30,23 @@ module coretb();
 
    /* verilator lint_on UNUSED */
 
-   reg [1:0]   sim_state;
+   reg [2:0]   sim_state;
    reg [31:0]  cycles;
    reg         ck;
    reg         nrst;
+
+   wire [63:0] round_64_1;
+   wire [63:0] round_64_2;
+   assign round_64_1 = {32'b0, TEST_BLOCK[31:0]};
+   assign round_64_2 = {32'b0, TEST_BLOCK[63:32]};
+   reg [63:0]  round_64_x;
+   reg [63:0]  round_64_y;
+   reg         block_valid;
+   wire        round_valid;
+   wire [63:0] block1_out;
+   wire [63:0] block2_out;
+   reg [$clog2(`SIMON_64_128_ROUNDS)-1:0] rounds_pending;
+   reg [63:0]                             round_key;
 
    simon_kexp key_expander
      (
@@ -42,6 +56,21 @@ module coretb();
       .k_ready (kexp_ready),
       .expanded(expanded),
       .exp_valid (exp_valid),
+      .ck (ck),
+      .nrst (nrst)
+      );
+
+   simon_round round
+     (
+      .mode (simon_mode),
+      .enc_dec(1'b1),
+      .block1_in(round_64_x),
+      .block2_in(round_64_y),
+      .key (round_key),
+      .i_valid (block_valid),
+      .o_valid (round_valid),
+      .block1_out (block1_out),
+      .block2_out (block2_out),
       .ck (ck),
       .nrst (nrst)
       );
@@ -80,6 +109,11 @@ module coretb();
       if (!nrst) begin
          sim_state <= `SIM_STATE_START;
          key_valid <= 0;
+         rounds_pending <= 0;
+         round_key <= 0;
+         block_valid <= 0;
+         round_64_x <= 0;
+         round_64_y <= 0;
       end
       else begin
          case (sim_state)
@@ -94,8 +128,31 @@ module coretb();
            `SIM_STATE_WAIT_DONE: begin
               key_valid <= 0;
               if (exp_valid) begin
-                 $display("done");
+                 $display("key expansion done");
+                 round_64_x <= round_64_1;
+                 round_64_y <= round_64_2;
+                 sim_state <= `SIM_STATE_ENCRYPT;
+                 rounds_pending <= `SIMON_64_128_ROUNDS;
+                 block_valid <= 1;
+                 round_key <= expanded[0];
+              end
+           end
+           `SIM_STATE_ENCRYPT: begin
+              if (rounds_pending == 1 && round_valid) begin
+                 $display("done encrypting");
                  $finish;
+              end
+              else begin
+                 if (round_valid) begin
+                    round_64_x <= block1_out;
+                    round_64_y <= block2_out;
+                    block_valid <= 1;
+                    round_key <= expanded[`SIMON_64_128_ROUNDS-rounds_pending+1];
+                    rounds_pending <= rounds_pending - 1;
+                 end
+                 else begin
+                    block_valid <= 0;
+                 end
               end
            end
          endcase
