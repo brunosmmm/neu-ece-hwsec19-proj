@@ -115,6 +115,7 @@ module simon_kexp
               if (k_valid) begin
                  cur_mode <= mode;
                  kexp_state <= `KEXP_STATE_EXP;
+                 kexp_phase <= 0;
                  if (mode == `SIMON_MODE_64_128) begin
                     xKey[0] <= {32'b0, key[31:0]};
                     xKey[1] <= {32'b0, key[63:32]};
@@ -136,7 +137,7 @@ module simon_kexp
                  kexp_state <= `KEXP_STATE_DONE;
               end
               else begin
-                 if (kexp_phase) begin
+                 if (!kexp_phase) begin
                     // next round's shifted word
                     if (cur_mode == `SIMON_MODE_64_128) begin
                        rr1_64in <= rr3_64out ^ xKey[`SIMON_64_128_ROUNDS-kexp_pending-3][31:0];
