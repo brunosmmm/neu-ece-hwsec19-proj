@@ -36,6 +36,8 @@
    they are supposed to integrate in chipyard.
 ** <2019-11-11 Mon>
    Finished implementation of Simon in verilog.
+** <2019-11-12 Tue>
+   Chisel implementation of Simon is successful. Now I need to properly instantiate it inside the proper wrappers provided by chipyard
 * To-do list
 ** TODO Low-priority [3/3]
 *** DONE verify if risc-v pk needs patching to work
