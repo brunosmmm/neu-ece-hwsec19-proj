@@ -138,7 +138,7 @@ module coretb();
               end
            end
            `SIM_STATE_ENCRYPT: begin
-              if (rounds_pending == 1 && round_valid) begin
+              if (rounds_pending == 0 && round_valid) begin
                  $display("done encrypting");
                  $finish;
               end
