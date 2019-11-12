@@ -110,6 +110,7 @@ module simon_kexp
          kexp_state <= `KEXP_STATE_IDLE;
          kexp_pending <= 0;
          kexp_phase <= 0;
+         cur_mode <= 0;
          rr3_64in <= 0;
          rr1_64in <= 0;
          rr3_128in <= 0;
