@@ -23,4 +23,7 @@ simulate_chisel: simon_kexp_chisel.vcd
 clean:
 	rm -rf coretb coretb_chisel *.vcd
 
-.PHONY: clean simon_kexp.vcd
+chisel_clean:
+	TARGET=$(shell pwd)/$(GENERATED_PATH) $(MAKE) -C ../../chisel/simon clean
+
+.PHONY: clean simon_kexp.vcd simon_kexp_chisel.vcd chisel_clean
