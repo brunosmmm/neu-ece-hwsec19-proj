@@ -108,6 +108,7 @@ module simon_kexp
    always @(posedge ck) begin
       if (!nrst) begin
          kexp_state <= `KEXP_STATE_IDLE;
+         kexp_pending <= 0;
          kexp_phase <= 0;
          rr3_64in <= 0;
          rr1_64in <= 0;
