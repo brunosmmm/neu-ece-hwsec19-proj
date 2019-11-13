@@ -77,17 +77,17 @@ int main(void) {
 
   cycles = rv64_get_cycles() - cycles;
 
-  // printf("INFO: ciphertext is 0x%lx\n", cipher);
+  printf("INFO: ciphertext is 0x%lx\n", cipher);
 
   // verify operation
   if (*((uint64_t*)test_block) != block) {
     // fail
-    // printf("ERROR: validation failed\n");
-    // printf("expected: 0x%lx, got 0x%lx\n", *((uint64_t*)test_block), block);
+    printf("ERROR: validation failed\n");
+    printf("expected: 0x%lx, got 0x%lx\n", *((uint64_t*)test_block), block);
     return 1;
   }
 
-  // printf("INFO: test succeeded. Cycles = %lu\n", cycles);
+  printf("INFO: test succeeded. Cycles = %lu\n", cycles);
 
   return 0;
 }

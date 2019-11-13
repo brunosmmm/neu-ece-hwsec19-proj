@@ -9,7 +9,9 @@ INCLUDEFLAGS = -I$(INCLUDES)
 RVINCLUDEFLAGS = -I../rocc-software/src -Iinclude
 CFLAGS ?= -Wall -g $(INCLUDEFLAGS)
 RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS) -DRISCV64
-RVDEBUGPATH = ../riscv-tests/debug/
+RVDEBUGPATH = misc
+RVMCFLAGS ?= -I$(RVDEBUGPATH) $(RVCFLAGS) -mcmodel=medany -std=gnu99 -O2 -fno-common -fno-builtin-printf
+RVMLDFLAGS=-static -nostdlib -nostartfiles -lgcc
 
 CIPHERS ?= simon salsa20 speck
 CIPHER_TESTS := $(foreach cipher,$(CIPHERS),$(cipher)_test_*)
@@ -26,6 +28,12 @@ all: native_tests riscv_tests liblightc.a
 %.rv.o: %.c
 	$(RVCC) $(RVCFLAGS) -c $< -o $@
 
+%.rvm.o: %.S
+	$(RVCC) $(RVMCFLAGS) -D__ASSEMBLY__=1 -c $< -o $@
+
+%.rvm.o: %.c
+	$(RVCC) $(RVMCFLAGS) -c $< -o $@
+
 liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 	$(PREFIX)ar rcs $@ $^
 
@@ -38,10 +46,8 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 %_test_rocc: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_mmio: $(TESTPATH)/test_%_mmio.c $(SRCPATH)/riscv/rvutil.c $(RVDEBUGPATH)/programs/entry.S $(RVDEBUGPATH)/programs/init.c
-	$(RVCC) $(RVCFLAGS) -march=rv64imac -mabi=lp64 $^ -DNHARTS=1 \
-	-T $(RVDEBUGPATH)/targets/RISC-V/spike64.lds \
-	-nostartfiles -mcmodel=medany -DXLEN=64 -o $@
+%_test_mmio: $(TESTPATH)/test_%_mmio.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(RVDEBUGPATH)/crt.rvm.o $(RVDEBUGPATH)/syscalls.rvm.o
+	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
 %_test_basic_riscv: $(TESTPATH)/test_%.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/%.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
