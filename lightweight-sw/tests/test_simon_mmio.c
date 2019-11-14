@@ -26,7 +26,9 @@
 #define SIMON_MMIO_REG_DATA1 0x18
 #define SIMON_MMIO_REG_DATA2 0x20
 
-#define SIMON_MMIO_BASE 0x10000000
+#ifndef HWACC_MMIO_BASE
+#define HWACC_MMIO_BASE 0x10000000
+#endif
 
 // A 128-bit key
 const uint8_t test_key[16] = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA,
@@ -49,26 +51,26 @@ int main(void) {
   cycles = rv64_get_cycles();
 
   // initialize
-  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_KEY1, kw1);
-  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_KEY2, kw2);
-  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_INIT);
+  reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_KEY1, kw1);
+  reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_KEY2, kw2);
+  reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_INIT);
 
   // load test block
-  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_DATA1, *((uint64_t*)test_block));
+  reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA1, *((uint64_t*)test_block));
 
   // perform encryption rounds
   for (i=0; i<SIMON_64_128_ROUNDS; i++) {
-    reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_ENC);
+    reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_ENC);
   }
 
-  cipher = reg_read64(SIMON_MMIO_BASE+SIMON_MMIO_REG_DATA1);
+  cipher = reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA1);
 
   // perform decryption rounds
   for (i=0; i<SIMON_64_128_ROUNDS; i++) {
-    reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_DEC);
+    reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_DEC);
   }
 
-  block = reg_read64(SIMON_MMIO_BASE+SIMON_MMIO_REG_DATA1);
+  block = reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA1);
 
   cycles = rv64_get_cycles() - cycles;
 

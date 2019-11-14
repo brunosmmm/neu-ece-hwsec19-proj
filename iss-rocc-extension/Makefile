@@ -8,6 +8,8 @@ ISA_SIM_INCLUDE =../riscv-isa-sim/riscv ../riscv-isa-sim/softfloat ../riscv-isa-
 INCLUDE_FLAGS=$(ISA_SIM_INCLUDE:%=-I%)
 CFLAGS ?=-Wall -g
 
+HWACC_MMIO_BASE ?= 0x1000000
+
 all: libsimon_rocc.so simon_mmio.so libsalsa20_rocc.so
 
 %.o: %.cc
@@ -25,7 +27,7 @@ lib%_rocc.so: %_rocc.o %_base.o $(REF_IMPL_PATH)/src/%.o
 	LD_LIBRARY_PATH=. $(SPIKE_PATH)/spike $(SPIKE_ARGS) --extension=$(*F)_rocc $(PK_PATH)/pk $(REF_IMPL_PATH)/$(*F)_test_rocc
 
 %_mmio_test: %_mmio.so
-	$(SPIKE_PATH)/spike $(SPIKE_ARGS) --extlib=./$(*F)_mmio.so --device=$(*F)_mmio,0x10000000 $(REF_IMPL_PATH)/$(*F)_test_mmio
+	$(SPIKE_PATH)/spike $(SPIKE_ARGS) --extlib=./$(*F)_mmio.so --device=$(*F)_mmio,$(HWACC_MMIO_BASE) $(REF_IMPL_PATH)/$(*F)_test_mmio
 
 clean:
 	rm -rf *.o *.so

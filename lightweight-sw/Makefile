@@ -20,6 +20,8 @@ SPIKE_PATH ?= ../riscv-isa-sim/build
 PK_PATH ?= ../riscv-pk/build
 SPIKE_ARGS ?=
 
+HWACC_MMIO_BASE ?= 0x10000000
+
 all: native_tests riscv_tests liblightc.a
 
 %.o: %.c
@@ -32,7 +34,7 @@ all: native_tests riscv_tests liblightc.a
 	$(RVCC) $(RVMCFLAGS) -D__ASSEMBLY__=1 -c $< -o $@
 
 %.rvm.o: %.c
-	$(RVCC) $(RVMCFLAGS) -c $< -o $@
+	$(RVCC) -DHWACC_MMIO_BASE=$(HWACC_MMIO_BASE) $(RVMCFLAGS) -c $< -o $@
 
 liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 	$(PREFIX)ar rcs $@ $^
