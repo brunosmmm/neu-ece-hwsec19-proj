@@ -38,6 +38,10 @@
    Finished implementation of Simon in verilog.
 ** <2019-11-12 Tue>
    Chisel implementation of Simon is successful. Now I need to properly instantiate it inside the proper wrappers provided by chipyard
+** <2019-11-13 Wed>
+   Integrated MMIO accelerator into rocket chip generator. Doesn't work, chisel implementation of simon core is faulty,
+   TODO write a verilog testbench for this thing. Also fixed the bare metal example compilation and tested with MMIO
+   functional simulation in Spike
 * To-do list
 ** TODO Low-priority [3/3]
 *** DONE verify if risc-v pk needs patching to work
