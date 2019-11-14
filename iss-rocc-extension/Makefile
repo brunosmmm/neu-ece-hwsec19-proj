@@ -8,7 +8,7 @@ ISA_SIM_INCLUDE =../riscv-isa-sim/riscv ../riscv-isa-sim/softfloat ../riscv-isa-
 INCLUDE_FLAGS=$(ISA_SIM_INCLUDE:%=-I%)
 CFLAGS ?=-Wall -g
 
-HWACC_MMIO_BASE ?= 0x1000000
+HWACC_MMIO_BASE ?= 0x2000
 
 all: libsimon_rocc.so simon_mmio.so libsalsa20_rocc.so
 
