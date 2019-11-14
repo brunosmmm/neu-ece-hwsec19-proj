@@ -8,9 +8,9 @@ INCLUDES = include
 INCLUDEFLAGS = -I$(INCLUDES)
 RVINCLUDEFLAGS = -I../rocc-software/src -Iinclude
 CFLAGS ?= -Wall -g $(INCLUDEFLAGS)
-RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS) -DRISCV64
+RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS) -DRISCV64 -O2
 RVDEBUGPATH = misc
-RVMCFLAGS ?= -I$(RVDEBUGPATH) $(RVCFLAGS) -mcmodel=medany -std=gnu99 -O2 -fno-common -fno-builtin-printf
+RVMCFLAGS ?= -I$(RVDEBUGPATH) $(RVCFLAGS) -mcmodel=medany -std=gnu99 -fno-common -fno-builtin-printf
 RVMLDFLAGS=-static -nostdlib -nostartfiles -lgcc
 
 CIPHERS ?= simon salsa20 speck
