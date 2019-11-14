@@ -20,7 +20,7 @@ SPIKE_PATH ?= ../riscv-isa-sim/build
 PK_PATH ?= ../riscv-pk/build
 SPIKE_ARGS ?=
 
-HWACC_MMIO_BASE ?= 0x2000
+HWACC_MMIO_BASE ?= 0x1000000
 
 all: native_tests riscv_tests liblightc.a
 
