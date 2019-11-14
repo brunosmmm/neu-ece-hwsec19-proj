@@ -1,7 +1,8 @@
 // Test Simon RoCC
 #include <stdint.h>
 // #include <stdio.h>
-#include "xcustom.h"
+#include "mmio.h"
+#include "util.h"
 #include "riscv/rvutil.h"
 
 #define ROCC_FUNC_OP_OFFSET 2
@@ -16,6 +17,9 @@
 #define ROCC_MODE_64_128 0
 #define ROCC_MODE_128_128 1
 
+#define SIMON_64_128_ROUNDS 44
+#define SIMON_128_128_ROUNDS 68
+
 #define SIMON_MMIO_REG_SCONF 0x0
 #define SIMON_MMIO_REG_KEY1 0x8
 #define SIMON_MMIO_REG_KEY2 0x10
@@ -23,15 +27,6 @@
 #define SIMON_MMIO_REG_DATA2 0x20
 
 #define SIMON_MMIO_BASE 0x10000000
-static uint64_t* simon_base = (uint64_t*)SIMON_MMIO_BASE;
-
-static void regwrite(uint64_t* base, uint64_t offset, uint64_t data) {
-  *(uint64_t*)((((uint8_t*)base)+offset)) = data;
-}
-
-static uint64_t regread(uint64_t* base, uint64_t offset) {
-  return *(uint64_t*)(((uint8_t*)base)+offset);
-}
 
 // A 128-bit key
 const uint8_t test_key[16] = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA,
@@ -43,7 +38,7 @@ static uint8_t test_block[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
 
 int main(void) {
-  uint64_t rounds = 0, kw1 = 0, kw2 = 0, block = 0, cipher = 0;
+  uint64_t kw1 = 0, kw2 = 0, block = 0, cipher = 0;
   uint64_t cycles = 0;
   unsigned int i = 0;
 
@@ -54,26 +49,26 @@ int main(void) {
   cycles = rv64_get_cycles();
 
   // initialize
-  regwrite(simon_base, SIMON_MMIO_REG_KEY1, kw1);
-  regwrite(simon_base, SIMON_MMIO_REG_KEY2, kw2);
-  regwrite(simon_base, SIMON_MMIO_REG_SCONF, ROCC_FUNC_INIT);
+  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_KEY1, kw1);
+  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_KEY2, kw2);
+  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_INIT);
 
   // load test block
-  regwrite(simon_base, SIMON_MMIO_REG_DATA1, *((uint64_t*)test_block));
+  reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_DATA1, *((uint64_t*)test_block));
 
   // perform encryption rounds
-  for (i=0; i<rounds; i++) {
-    regwrite(simon_base, SIMON_MMIO_REG_SCONF, ROCC_FUNC_ENC);
+  for (i=0; i<SIMON_64_128_ROUNDS; i++) {
+    reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_ENC);
   }
 
-  cipher = regread(simon_base, SIMON_MMIO_REG_DATA1);
+  cipher = reg_read64(SIMON_MMIO_BASE+SIMON_MMIO_REG_DATA1);
 
   // perform decryption rounds
-  for (i=0; i<rounds; i++) {
-    regwrite(simon_base, SIMON_MMIO_REG_SCONF, ROCC_FUNC_DEC);
+  for (i=0; i<SIMON_64_128_ROUNDS; i++) {
+    reg_write64(SIMON_MMIO_BASE+SIMON_MMIO_REG_SCONF, ROCC_FUNC_DEC);
   }
 
-  block = regread(simon_base, SIMON_MMIO_REG_DATA1);
+  block = reg_read64(SIMON_MMIO_BASE+SIMON_MMIO_REG_DATA1);
 
   cycles = rv64_get_cycles() - cycles;
 
