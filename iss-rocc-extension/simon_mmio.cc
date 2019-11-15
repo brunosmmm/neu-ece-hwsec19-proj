@@ -159,11 +159,11 @@ private:
       // only one register needed
       SIMON_64_128_WORD_DTYPE x, y;
       x = ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[0];
-      y = ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[1];
+      y = ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[1])[0];
       _simon_64_128_enc_round(this->round_keys.k64_128[this->round_counter++],
                               &x, &y);
       ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[0] = x;
-      ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[1] = y;
+      ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[1])[0] = y;
     } else {
       // two registers needed
       _simon_128_128_enc_round(this->round_keys.k128_128[this->round_counter++],
@@ -175,13 +175,13 @@ private:
     if (this->get_mode() == SIMON_64_128_MODE) {
       SIMON_64_128_WORD_DTYPE x, y;
       x = ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[0];
-      y = ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[1];
+      y = ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[1])[0];
       _simon_64_128_dec_round(
           this->round_keys
               .k64_128[(SIMON_64_128_ROUNDS - 1) - this->round_counter++],
           &x, &y);
       ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[0] = x;
-      ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[0])[1] = y;
+      ((SIMON_64_128_WORD_DTYPE *)&this->data_regs[1])[0] = y;
     } else {
       // two registers needed
       _simon_128_128_dec_round(
