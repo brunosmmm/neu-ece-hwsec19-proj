@@ -42,6 +42,8 @@
    Integrated MMIO accelerator into rocket chip generator. Doesn't work, chisel implementation of simon core is faulty,
    TODO write a verilog testbench for this thing. Also fixed the bare metal example compilation and tested with MMIO
    functional simulation in Spike
+ ** <2019-11-15 Fri>
+   MMIO chisel accelerator working in emulated processor running bare metal application.
 * To-do list
 ** TODO Low-priority [3/3]
 *** DONE verify if risc-v pk needs patching to work
