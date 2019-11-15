@@ -17,7 +17,7 @@ extern "C" {
 
 // internal state flags - half of flags register
 #define SIMON_FLAG_INITIALIZED 0x1
-#define SIMON_FLAG_DONE 0x2
+#define SIMON_FLAG_READY 0x2
 #define SIMON_FLAG_ERR 0x4
 
 #define SIMON_MAX_ROUNDS SIMON_128_128_ROUNDS
