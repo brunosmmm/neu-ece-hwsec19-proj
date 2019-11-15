@@ -8,6 +8,9 @@ coretb: coretb.v $(SIMULATION_FILES)
 coretb_chisel: coretb_chisel.v external/SimonKeyExpander/SimonKeyExpander.v external/SimonRound/SimonRound.v
 	iverilog -g2012 -o $@ -y. -yexternal/SimonKeyExpander -yexternal/SimonRound $<
 
+tb_SimonCore: tb_SimonCore.v external/SimonCore/SimonCore.v
+	iverilog -g2012 -o $@ -y. -yexternal/SimonCore $<
+
 external/%.v:
 	TARGET=$(shell pwd)/$(GENERATED_PATH) $(MAKE) -C ../../chisel/simon $@
 
@@ -16,6 +19,9 @@ simon_kexp.vcd: coretb
 
 simon_kexp_chisel.vcd: coretb_chisel
 	./coretb_chisel
+
+SimonCore.vcd: tb_SimonCore
+	./tb_SimonCore
 
 simulate: simon_kexp.vcd
 simulate_chisel: simon_kexp_chisel.vcd
@@ -26,4 +32,4 @@ clean:
 chisel_clean:
 	TARGET=$(shell pwd)/$(GENERATED_PATH) $(MAKE) -C ../../chisel/simon clean
 
-.PHONY: clean simon_kexp.vcd simon_kexp_chisel.vcd chisel_clean
+.PHONY: clean simon_kexp.vcd simon_kexp_chisel.vcd chisel_clean SimonCore.vcd
