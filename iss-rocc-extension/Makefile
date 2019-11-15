@@ -26,6 +26,9 @@ lib%_rocc.so: %_rocc.o %_base.o $(REF_IMPL_PATH)/src/%.o
 %_rocc_test: lib%_rocc.so
 	LD_LIBRARY_PATH=. $(SPIKE_PATH)/spike $(SPIKE_ARGS) --extension=$(*F)_rocc $(PK_PATH)/pk $(REF_IMPL_PATH)/$(*F)_test_rocc
 
+%_roccbm_test: lib%_rocc.so
+	LD_LIBRARY_PATH=. $(SPIKE_PATH)/spike $(SPIKE_ARGS) --extension=$(*F)_rocc $(REF_IMPL_PATH)/$(*F)_test_rocc_bm
+
 %_mmio_test: %_mmio.so
 	$(SPIKE_PATH)/spike $(SPIKE_ARGS) --extlib=./$(*F)_mmio.so --device=$(*F)_mmio,$(HWACC_MMIO_BASE) $(REF_IMPL_PATH)/$(*F)_test_mmio
 

@@ -21,6 +21,7 @@ PK_PATH ?= ../riscv-pk/build
 SPIKE_ARGS ?=
 
 HWACC_MMIO_BASE ?= 0x1000000
+BAREMETAL_OBJS = $(RVDEBUGPATH)/crt.rvm.o $(RVDEBUGPATH)/syscalls.rvm.o
 
 all: native_tests riscv_tests liblightc.a
 
@@ -34,7 +35,7 @@ all: native_tests riscv_tests liblightc.a
 	$(RVCC) $(RVMCFLAGS) -D__ASSEMBLY__=1 -c $< -o $@
 
 %.rvm.o: %.c
-	$(RVCC) -DHWACC_MMIO_BASE=$(HWACC_MMIO_BASE) $(RVMCFLAGS) -c $< -o $@
+	$(RVCC) -DHWACC_MMIO_BASE=$(HWACC_MMIO_BASE) -DBAREMETAL $(RVMCFLAGS) -c $< -o $@
 
 liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 	$(PREFIX)ar rcs $@ $^
@@ -48,7 +49,10 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 %_test_rocc: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_mmio: $(TESTPATH)/test_%_mmio.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(RVDEBUGPATH)/crt.rvm.o $(RVDEBUGPATH)/syscalls.rvm.o
+%_test_rocc_bm: $(TESTPATH)/test_%_rocc.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
+	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
+
+%_test_mmio: $(TESTPATH)/test_%_mmio.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
 	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
 %_test_basic_riscv: $(TESTPATH)/test_%.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/%.rv.o

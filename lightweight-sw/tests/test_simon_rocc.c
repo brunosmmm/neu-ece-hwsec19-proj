@@ -1,6 +1,8 @@
 // Test Simon RoCC
 #include <stdint.h>
+#ifndef BAREMETAL
 #include <stdio.h>
+#endif
 #include "xcustom.h"
 #include "riscv/rvutil.h"
 
