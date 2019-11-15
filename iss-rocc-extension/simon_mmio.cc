@@ -44,6 +44,8 @@ public:
       break;
     case SIMON_MMIO_REG_KEY1:
     case SIMON_MMIO_REG_KEY2:
+      memset(bytes, 0, len);
+      break;
     default:
       return false;
     }
