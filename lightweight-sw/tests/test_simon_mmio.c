@@ -36,6 +36,16 @@
 #define HWACC_MMIO_BASE 0x10000000
 #endif
 
+#define DEBUGSTUCK
+#define MAX_WAIT 100000
+
+#ifdef DEBUGSTUCK
+#define WAIT_READY wait_ready(MAX_WAIT)
+#else
+#define WAIT_READY while (!(reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF)\
+                            & SIMON_MMIO_SCONF_INIT))
+#endif
+
 // A 128-bit key
 const uint8_t test_key[16] = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA,
                               0x42, 0x00, 0x11, 0x30, 0xF9, 0xA4,
@@ -44,6 +54,21 @@ const uint8_t test_key[16] = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA,
 // a 64-bit plaintext block
 static uint8_t test_block[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
+inline static void wait_ready(int64_t max_wait) {
+  unsigned int wait = max_wait;
+  while (!(reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF)
+           & SIMON_MMIO_SCONF_INIT)) {
+    if (max_wait < 0) {
+      continue;
+    }
+    if (wait == 0) {
+      // stuck
+      printf("DEBUG: got stuck while waiting for MMIO device!\n");
+      exit(1);
+    }
+    wait--;
+  }
+}
 
 int main(void) {
   uint64_t kw1 = 0, kw2 = 0, block = 0, cipher = 0, tmp = 0;
@@ -63,8 +88,7 @@ int main(void) {
   reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_KEY2, kw2);
 
   // wait for completion of key expansion
-  while (!(reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF)
-           & SIMON_MMIO_SCONF_INIT));
+  WAIT_READY;
 
   // load test block; immediately performs one round
   reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA1, ((uint32_t*)test_block)[0]);
@@ -73,8 +97,7 @@ int main(void) {
   // perform encryption rounds
   for (i=0; i<SIMON_64_128_ROUNDS-1; i++) {
     // start next round
-    while (!(reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF)
-             & SIMON_MMIO_SCONF_READY));
+    WAIT_READY;
     tmp = reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA2);
     reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA2, tmp);
   }
@@ -92,8 +115,7 @@ int main(void) {
 
   // perform decryption rounds
   for (i=0; i<SIMON_64_128_ROUNDS; i++) {
-    while (!(reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF)
-             & SIMON_MMIO_SCONF_READY));
+    WAIT_READY;
     tmp = reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA2);
     reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA2, tmp);
   }
