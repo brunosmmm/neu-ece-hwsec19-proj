@@ -5,6 +5,8 @@
 `define SIM_STATE_LOAD_KEY 1
 `define SIM_STATE_WAIT_KEY 2
 `define SIM_STATE_ENCRYPT 3
+`define SIM_STATE_WAIT 4
+`define SIM_STATE_DECRYPT 5
 
 module tb_SimonCore();
 
@@ -31,6 +33,7 @@ module tb_SimonCore();
    assign round_64_1 = {32'b0, TEST_BLOCK[31:0]};
    assign round_64_2 = {32'b0, TEST_BLOCK[63:32]};
    reg [$clog2(`SIMON_64_128_ROUNDS)-1:0] rounds_pending;
+   reg [15:0]                             wait_counter;
 
    reg [63:0]  data_reg_1;
    reg [63:0]  data_reg_2;
@@ -104,6 +107,7 @@ module tb_SimonCore();
          data_reg_2 <= 0;
          single <= 0;
          enc_dec <= 0;
+         wait_counter <= 0;
       end
       else begin
          case (sim_state)
@@ -129,7 +133,11 @@ module tb_SimonCore();
            `SIM_STATE_ENCRYPT: begin
               if (rounds_pending == 0 && round_done) begin
                  $display("done encrypting");
-                 $finish;
+                 enc_dec <= 0;
+                 round_start <= 0;
+                 wait_counter <= 10;
+                 rounds_pending <= `SIMON_64_128_ROUNDS;
+                 sim_state <= `SIM_STATE_WAIT;
               end
               else begin
                  if (round_done) begin
@@ -148,6 +156,37 @@ module tb_SimonCore();
                  end
               end
            end
+           `SIM_STATE_WAIT: begin
+              if (wait_counter > 0) begin
+                 wait_counter <= wait_counter - 1;
+              end
+              else begin
+                 round_start <= 1;
+                 sim_state <= `SIM_STATE_DECRYPT;
+              end
+           end
+           `SIM_STATE_DECRYPT: begin
+              if (rounds_pending == 0 && round_done) begin
+                 $display("done decrypting");
+                 $finish;
+              end
+              else begin
+                 if (round_done) begin
+                    data_reg_1 <= data_out_1;
+                    data_reg_2 <= data_out_2;
+                    if (round_start) begin
+                       round_start <= 0;
+                    end
+                    else begin
+                       round_start <= 1;
+                       rounds_pending <= rounds_pending - 1;
+                    end
+                 end
+                 else begin
+                    round_start <= 0;
+                 end
+              end
+            end
          endcase
       end
    end
