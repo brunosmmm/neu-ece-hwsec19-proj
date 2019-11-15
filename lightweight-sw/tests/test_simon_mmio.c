@@ -37,7 +37,7 @@
 #endif
 
 #define DEBUGSTUCK
-#define MAX_WAIT 100000
+#define MAX_WAIT 1000
 
 #ifdef DEBUGSTUCK
 #define WAIT_READY wait_ready(MAX_WAIT)
