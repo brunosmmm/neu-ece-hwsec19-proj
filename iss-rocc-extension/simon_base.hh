@@ -56,6 +56,13 @@ protected:
            SIMON_INTERNAL_MODE_OFFSET;
   }
 
+  void set_mode(uint8_t mode) {
+    this->flags &= ~((uint64_t)SIMON_INTERNAL_MODE_MASK<<SIMON_INTERNAL_MODE_OFFSET);
+    if (mode == SIMON_128_128_MODE) {
+      this->flags |= ((uint64_t)SIMON_INTERNAL_MODE_MASK<<SIMON_INTERNAL_MODE_OFFSET);
+    }
+  }
+
   void debug_print(std::string str) {
     fprintf(stderr, "SIMON_ROCC: %s\n", str.c_str());
   }
