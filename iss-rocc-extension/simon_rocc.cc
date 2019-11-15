@@ -124,12 +124,12 @@ class crypto_rocc_t : public rocc_t, public simon_base_hwacc
 
     if (this->get_mode() == SIMON_64_128_MODE) {
       if (this->round_counter == SIMON_64_128_ROUNDS) {
-        this->flags |= SIMON_FLAG_DONE;
+        this->flags |= SIMON_FLAG_READY;
         this->round_counter = 0;
       }
     } else if (this->get_mode() == SIMON_128_128_MODE) {
       if (this->round_counter == SIMON_64_128_ROUNDS) {
-        this->flags |= SIMON_FLAG_DONE;
+        this->flags |= SIMON_FLAG_READY;
         this-> round_counter = 0;
       }
     }
