@@ -98,6 +98,7 @@ public:
     case SIMON_MMIO_REG_SCONF:
       {
         uint64_t masked = 0;
+        uint8_t enc_dec = 0;
         memcpy(&masked, bytes, len);
         masked &= SIMON_MMIO_CONF_WR_MASK;
         if (masked & SIMON_MMIO_SCONF_MODE) {
@@ -105,7 +106,12 @@ public:
         } else {
           this->set_mode(SIMON_64_128_MODE);
         }
-        if (masked & SIMON_MMIO_SCONF_ENCDEC) {
+        enc_dec = (masked & SIMON_MMIO_SCONF_ENCDEC)? 1 : 0;
+        if (this->enc_dec ^ enc_dec) {
+          // mode changed, reset round counter
+          this->round_counter = 0;
+        }
+        if (enc_dec) {
           this->enc_dec = SIMON_OP_ENC;
         } else {
           this->enc_dec = SIMON_OP_DEC;
