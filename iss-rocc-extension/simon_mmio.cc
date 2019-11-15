@@ -204,6 +204,9 @@ private:
     if (this->get_mode() == SIMON_128_128_MODE) {
       reg_val |= SIMON_MMIO_SCONF_MODE;
     }
+    if (this->single) {
+      reg_val |= SIMON_MMIO_SCONF_SINGLE;
+    }
     return reg_val;
   }
 };
