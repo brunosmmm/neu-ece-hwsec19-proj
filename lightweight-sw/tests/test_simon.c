@@ -1,9 +1,12 @@
 #include "simon.h"
-#include "util.h"
 #include <stdint.h>
 
 #ifdef RISCV64
 #include "riscv/rvutil.h"
+#endif
+
+#ifndef BAREMETAL
+#include "util.h"
 #endif
 
 const static key128_t test_key = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA, 0x42, 0x00,
@@ -36,10 +39,14 @@ int main(void) {
 #endif
 
   // display ciphertext
+#ifndef BAREMETAL
   print_bytes((uint8_t *)cipher, sizeof(block64_t));
 
   // display plaintext
   print_bytes((uint8_t*)out, sizeof(block64_t));
+#else
+  printf("INFO: ciphertext is 0x%lx\n", cipher);
+#endif
 
   // verify
   for (i=0; i<sizeof(block64_t); i++) {
