@@ -2,7 +2,7 @@
 #include "util.h"
 #include <stdint.h>
 #include "riscv/rvutil.h"
-#include "xcustom.h"
+#include "rocc.h"
 
 #define SALSA20_FUNC_SET_KEY1 0x0
 #define SALSA20_FUNC_SET_KEY2 0x1
@@ -33,21 +33,21 @@ int main(void) {
   rv64_cycles = rv64_get_cycles();
 
   // initialize
-  ROCC_INSTRUCTION(0, ret, key[1], key[0], SALSA20_FUNC_SET_KEY1);
-  ROCC_INSTRUCTION(0, ret, key[2], key[3], SALSA20_FUNC_SET_KEY2);
-  ROCC_INSTRUCTION(0, ret, test_nonce, 0, SALSA20_FUNC_SET_NONCE);
+  ROCC_INSTRUCTION_DSS(0, ret, key[1], key[0], SALSA20_FUNC_SET_KEY1);
+  ROCC_INSTRUCTION_DSS(0, ret, key[2], key[3], SALSA20_FUNC_SET_KEY2);
+  ROCC_INSTRUCTION_DSS(0, ret, test_nonce, 0, SALSA20_FUNC_SET_NONCE);
 
   tmp = *((uint64_t*)test_block);
 
   // encrypt
-  ROCC_INSTRUCTION(0, tmp, tmp, 0, SALSA20_FUNC_ENC_DEC);
+  ROCC_INSTRUCTION_DSS(0, tmp, tmp, 0, SALSA20_FUNC_ENC_DEC);
 
   // save ciphertext
   cipher = tmp;
 
   // decrypt (must re-initialize)
-  ROCC_INSTRUCTION(0, ret, test_nonce, 0, SALSA20_FUNC_SET_NONCE);
-  ROCC_INSTRUCTION(0, tmp, tmp, 0, SALSA20_FUNC_ENC_DEC);
+  ROCC_INSTRUCTION_DSS(0, ret, test_nonce, 0, SALSA20_FUNC_SET_NONCE);
+  ROCC_INSTRUCTION_DSS(0, tmp, tmp, 0, SALSA20_FUNC_ENC_DEC);
 
   rv64_cycles = rv64_get_cycles() - rv64_cycles;
 

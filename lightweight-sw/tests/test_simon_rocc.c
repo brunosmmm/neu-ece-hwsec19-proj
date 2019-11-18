@@ -3,7 +3,7 @@
 #ifndef BAREMETAL
 #include <stdio.h>
 #endif
-#include "xcustom.h"
+#include "rocc.h"
 #include "riscv/rvutil.h"
 
 #define ROCC_FUNC_OP_OFFSET 2
@@ -39,21 +39,21 @@ int main(void) {
   cycles = rv64_get_cycles();
 
   // initialize
-  ROCC_INSTRUCTION(0, rounds, kw1, kw2, ROCC_FUNC_INIT);
+  ROCC_INSTRUCTION_DSS(0, rounds, kw1, kw2, ROCC_FUNC_INIT);
 
   // load test block
   block = *((uint64_t*)test_block);
 
   // perform encryption rounds
   for (i=0; i<rounds; i++) {
-    ROCC_INSTRUCTION(0, block, block, 0, ROCC_FUNC_ENC);
+    ROCC_INSTRUCTION_DSS(0, block, block, 0, ROCC_FUNC_ENC);
   }
 
   cipher = block;
 
   // perform decryption rounds
   for (i=0; i<rounds; i++) {
-    ROCC_INSTRUCTION(0, block, block, 0, ROCC_FUNC_DEC);
+    ROCC_INSTRUCTION_DSS(0, block, block, 0, ROCC_FUNC_DEC);
   }
 
   cycles = rv64_get_cycles() - cycles;
