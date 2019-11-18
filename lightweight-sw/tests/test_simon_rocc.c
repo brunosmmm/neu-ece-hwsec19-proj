@@ -18,6 +18,8 @@
 #define ROCC_MODE_64_128 0
 #define ROCC_MODE_128_128 1
 
+#define SIMON_64_128_ROUNDS 44
+
 // A 128-bit key
 const static uint8_t test_key[16] = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA,
                                      0x42, 0x00, 0x11, 0x30, 0xF9, 0xA4,
@@ -39,20 +41,20 @@ int main(void) {
   cycles = rv64_get_cycles();
 
   // initialize
-  ROCC_INSTRUCTION_DSS(0, rounds, kw1, kw2, ROCC_FUNC_INIT);
+  ROCC_INSTRUCTION_SS(0, kw1, kw2, ROCC_FUNC_INIT);
 
   // load test block
   block = *((uint64_t*)test_block);
 
   // perform encryption rounds
-  for (i=0; i<rounds; i++) {
+  for (i=0; i<SIMON_64_128_ROUNDS; i++) {
     ROCC_INSTRUCTION_DSS(0, block, block, 0, ROCC_FUNC_ENC);
   }
 
   cipher = block;
 
   // perform decryption rounds
-  for (i=0; i<rounds; i++) {
+  for (i=0; i<SIMON_64_128_ROUNDS; i++) {
     ROCC_INSTRUCTION_DSS(0, block, block, 0, ROCC_FUNC_DEC);
   }
 
