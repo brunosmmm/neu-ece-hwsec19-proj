@@ -59,7 +59,7 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
 %_test_basic_riscv_bm: $(TESTPATH)/test_%.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(TESTPATH)/util.rvm.o $(SRCPATH)/%.rvm.o
-	$(RVCC) $(RVCFLAGS) -o $@ $^
+	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
 tests_native_simon: simon_test_basic
 tests_native_salsa20: salsa20_test_basic
