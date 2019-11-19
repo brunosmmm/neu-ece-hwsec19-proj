@@ -52,6 +52,12 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 %_test_rocc_bm: $(TESTPATH)/test_%_rocc.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
 	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
+%_test_toosly: $(TESTPATH)/test_%_toosly.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
+	$(RVCC) $(RVCFLAGS) -o $@ $^
+
+%_test_toosly_bm: $(TESTPATH)/test_%_toosly.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
+	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
+
 %_test_mmio: $(TESTPATH)/test_%_mmio.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
 	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
