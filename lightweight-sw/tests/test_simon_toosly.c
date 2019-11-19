@@ -55,6 +55,7 @@ int main(void) {
   // perform decryption rounds
   ROCC_INSTRUCTION_SS(1, &block, 1, ROCC_FUNC_DEC);
 
+  asm volatile ("fence");
   cycles = rv64_get_cycles() - cycles;
 
   printf("INFO: ciphertext is 0x%lx\n", cipher);
