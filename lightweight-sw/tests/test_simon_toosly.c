@@ -47,12 +47,12 @@ int main(void) {
   block = *((uint64_t*)test_block);
 
   // perform encryption rounds
-  ROCC_INSTRUCTION_SS(1, 1, &block, ROCC_FUNC_ENC);
+  ROCC_INSTRUCTION_SS(1, &block, 1, ROCC_FUNC_ENC);
 
   cipher = block;
 
   // perform decryption rounds
-  ROCC_INSTRUCTION_SS(1, 1, &block, ROCC_FUNC_DEC);
+  ROCC_INSTRUCTION_SS(1, &block, 1, ROCC_FUNC_DEC);
 
   cycles = rv64_get_cycles() - cycles;
 
