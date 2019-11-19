@@ -49,6 +49,7 @@ int main(void) {
   // perform encryption rounds
   ROCC_INSTRUCTION_SS(1, &block, 1, ROCC_FUNC_ENC);
 
+  asm volatile ("fence");
   cipher = block;
 
   // perform decryption rounds
