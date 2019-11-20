@@ -15,10 +15,19 @@
 #define FUNC_CSTOR 4
 
 // define custom simon rocc instructions
-#define CIPHER_LOAD(addr, dest)                                     \
+#define TOOSLY_CIPHER_LOAD(addr, dest)                              \
   ROCC_INSTRUCTION_DSS(SIMON_TOOSLY_ID, dest, addr, 0, FUNC_CLOAD)
 
-#define CIPHER_STORE(addr, plain)                               \
+#define TOOSLY_CIPHER_STORE(addr, plain)                        \
   ROCC_INSTRUCTION_SS(SIMON_TOOSLY_ID, addr, plain, FUNC_CSTOR)
+
+#define TOOSLY_ENC(addr, length)                                \
+  ROCC_INSTRUCTION_SS(SIMON_TOOSLY_ID, addr, length, FUNC_ENC)
+
+#define TOOSLY_DEC(addr, length)                                \
+  ROCC_INSTRUCTION_SS(SIMON_TOOSLY_ID, addr, length, FUNC_DEC)
+
+#define TOOSLY_INIT(kw1, kw2)                               \
+  ROCC_INSTRUCTION_SS(SIMON_TOOSLY_ID, kw1, kw2, FUNC_INIT)
 
 #endif

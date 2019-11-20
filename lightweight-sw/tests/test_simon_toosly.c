@@ -3,7 +3,7 @@
 #ifndef BAREMETAL
 #include <stdio.h>
 #endif
-#include "rocc.h"
+#include "riscv/simon_toosly.h"
 #include "riscv/rvutil.h"
 
 #define ROCC_FUNC_OP_OFFSET 2
@@ -12,8 +12,8 @@
 #define ROCC_FUNC_INIT (0<<ROCC_FUNC_OP_OFFSET)
 #define ROCC_FUNC_ENC (1<<ROCC_FUNC_OP_OFFSET)
 #define ROCC_FUNC_DEC (2<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_FLAGS (3<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_HWORD (4<<ROCC_FUNC_OP_OFFSET)
+#define ROCC_FUNC_LOAD (3 << ROCC_FUNC_OP_OFFSET)
+#define ROCC_FUNC_STORE (4 << ROCC_FUNC_OP_OFFSET)
 
 #define ROCC_MODE_64_128 0
 #define ROCC_MODE_128_128 1
@@ -30,9 +30,8 @@ static uint8_t test_block[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
 
 int main(void) {
-  uint64_t rounds = 0, kw1 = 0, kw2 = 0, block = 0, cipher = 0;
-  uint64_t cycles = 0, time = 0, instret = 0;
-  unsigned int i = 0;
+  uint64_t kw1 = 0, kw2 = 0, block = 0, cipher = 0;
+  uint64_t cycles = 0;
 
   // arrange key words from array
   kw1 = ((uint64_t*)test_key)[0];
@@ -41,19 +40,19 @@ int main(void) {
   cycles = rv64_get_cycles();
 
   // initialize
-  ROCC_INSTRUCTION_SS(1, kw1, kw2, ROCC_FUNC_INIT);
+  TOOSLY_INIT(kw1, kw2);
 
   // load test block
   block = *((uint64_t*)test_block);
 
   // perform encryption rounds
-  ROCC_INSTRUCTION_SS(1, &block, 1, ROCC_FUNC_ENC);
+  TOOSLY_ENC(&block, 1);
 
   asm volatile ("fence");
   cipher = block;
 
   // perform decryption rounds
-  ROCC_INSTRUCTION_SS(1, &block, 1, ROCC_FUNC_DEC);
+  TOOSLY_DEC(&block, 1);
 
   asm volatile ("fence");
   cycles = rv64_get_cycles() - cycles;
@@ -68,7 +67,23 @@ int main(void) {
     return 1;
   }
 
-  printf("INFO: test succeeded. Cycles = %lu\n", cycles);
+  printf("INFO: test 1 succeeded. Cycles = %lu\n", cycles);
+
+  // test encrypted load/store
+  TOOSLY_CIPHER_STORE(&cipher, *((uint64_t*)test_block));
+  asm volatile("fence");
+
+  TOOSLY_CIPHER_LOAD(&cipher, block);
+  asm volatile("fence");
+
+  if (*((uint64_t *)test_block) != block) {
+    // fail
+    printf("ERROR: validation failed\n");
+    printf("expected: 0x%lx, got 0x%lx\n", *((uint64_t *)test_block), block);
+    return 1;
+  }
+
+  printf("INFO: test 2 succeeded.\n");
 
   return 0;
 }
