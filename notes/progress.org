@@ -46,6 +46,9 @@
    MMIO chisel accelerator working in emulated processor running bare metal application.
 ** <2019-11-19 Tue>
    Got RoCC working yesterday. Tried building a system with BOOM but fails with RoCC accelerator
+** <2019-11-20 Wed>
+   Toosly cryptoapplication completed. BOOM build is successful with some hacking. Still to verify that it doesnt
+   break rocketchip based design.
 * To-do list
 ** TODO Low-priority [3/3]
 *** DONE verify if risc-v pk needs patching to work
