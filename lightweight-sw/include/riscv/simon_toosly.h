@@ -7,12 +7,16 @@
 
 #include "rocc.h"
 
+#define ROCC_FUNC_OP_OFFSET 2
+#define ROCC_FUNC_MODE_OFFSET 0
+
+// toosly accelerator only supports 64/128 mode
 #define SIMON_TOOSLY_ID 1
-#define FUNC_INIT 0
-#define FUNC_ENC 1
-#define FUNC_DEC 2
-#define FUNC_CLOAD 3
-#define FUNC_CSTOR 4
+#define FUNC_INIT (0<<ROCC_FUNC_OP_OFFSET)
+#define FUNC_ENC (1<<ROCC_FUNC_OP_OFFSET)
+#define FUNC_DEC (2<<ROCC_FUNC_OP_OFFSET)
+#define FUNC_CLOAD (3<<ROCC_FUNC_OP_OFFSET)
+#define FUNC_CSTOR (4<<ROCC_FUNC_OP_OFFSET)
 
 // define custom simon rocc instructions
 #define TOOSLY_CIPHER_LOAD(addr, dest)                              \

@@ -6,19 +6,6 @@
 #include "riscv/simon_toosly.h"
 #include "riscv/rvutil.h"
 
-#define ROCC_FUNC_OP_OFFSET 2
-#define ROCC_FUNC_MODE_OFFSET 0
-
-#define ROCC_FUNC_INIT (0<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_ENC (1<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_DEC (2<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_LOAD (3 << ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_STORE (4 << ROCC_FUNC_OP_OFFSET)
-
-#define ROCC_MODE_64_128 0
-#define ROCC_MODE_128_128 1
-
-#define SIMON_64_128_ROUNDS 44
 
 // A 128-bit key
 const static uint8_t test_key[16] = {0x80, 0x01, 0x02, 0xFF, 0x2A, 0xAA,
