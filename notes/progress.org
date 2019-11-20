@@ -48,7 +48,7 @@
    Got RoCC working yesterday. Tried building a system with BOOM but fails with RoCC accelerator
 ** <2019-11-20 Wed>
    Toosly cryptoapplication completed. BOOM build is successful with some hacking. Still to verify that it doesnt
-   break rocketchip based design.
+   break rocketchip based design. Regular RoCC is broken after updates to RTL implementation (NOW FIXED)
 * To-do list
 ** TODO Low-priority [3/3]
 *** DONE verify if risc-v pk needs patching to work
