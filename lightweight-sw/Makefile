@@ -46,33 +46,33 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 %_test_state: $(TESTPATH)/test_%_state.o $(SRCPATH)/%.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-%_test_rocc: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
+%_test_rocc.riscv: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_rocc_bm: $(TESTPATH)/test_%_rocc.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
+%_test_rocc.riscvbm: $(TESTPATH)/test_%_rocc.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
 	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
-%_test_toosly: $(TESTPATH)/test_%_toosly.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
+%_test_toosly.riscv: $(TESTPATH)/test_%_toosly.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_toosly_bm: $(TESTPATH)/test_%_toosly.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
+%_test_toosly.riscvbm: $(TESTPATH)/test_%_toosly.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
 	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
-%_test_mmio: $(TESTPATH)/test_%_mmio.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
+%_test_mmio.riscvbm: $(TESTPATH)/test_%_mmio.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
 	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
-%_test_basic_riscv: $(TESTPATH)/test_%.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/%.rv.o
+%_test_basic.riscv: $(TESTPATH)/test_%.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/%.rv.o
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_basic_riscv_bm: $(TESTPATH)/test_%.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(SRCPATH)/%.rvm.o $(BAREMETAL_OBJS)
+%_test_basic.riscvbm: $(TESTPATH)/test_%.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(SRCPATH)/%.rvm.o $(BAREMETAL_OBJS)
 	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
 
 tests_native_simon: simon_test_basic
 tests_native_salsa20: salsa20_test_basic
 tests_native_speck: speck_test_basic
 
-tests_riscv_simon: simon_test_rocc simon_test_mmio simon_test_basic_riscv simon_test_basic_riscv_bm simon_test_rocc_bm simon_test_toosly simon_test_toosly_bm
-tests_riscv_salsa20: salsa20_test_basic_riscv salsa20_test_rocc
+tests_riscv_simon: simon_test_rocc.riscv simon_test_rocc.riscvbm simon_test_mmio.riscvbm simon_test_basic.riscv simon_test_basic.riscvbm simon_test_toosly.riscv simon_test_toosly.riscvbm
+tests_riscv_salsa20: salsa20_test_basic.riscv salsa20_test_rocc.riscv
 
 native_tests: tests_native_simon tests_native_speck tests_native_salsa20
 riscv_tests: tests_riscv_simon tests_riscv_salsa20
