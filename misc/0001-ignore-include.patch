@@ -1,0 +1,25 @@
+From eef96cbe81355714a6d32548319ffc485b528cc5 Mon Sep 17 00:00:00 2001
+From: Bruno Morais <brunosmmm@gmail.com>
+Date: Thu, 21 Nov 2019 12:23:17 -0500
+Subject: [PATCH] ignore include
+
+---
+ src/helper/options.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/helper/options.c b/src/helper/options.c
+index b60d58de8..2068827b8 100644
+--- a/src/helper/options.c
++++ b/src/helper/options.c
+@@ -35,7 +35,7 @@
+ #include <libproc.h>
+ #endif
+ #ifdef HAVE_SYS_SYSCTL_H
+-#include <sys/sysctl.h>
++// #include <sys/sysctl.h>
+ #endif
+ #if IS_WIN32 && !IS_CYGWIN
+ #include <windows.h>
+-- 
+2.24.0
+
