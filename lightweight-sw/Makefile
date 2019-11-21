@@ -65,7 +65,7 @@ native_tests: tests_native_simon tests_native_speck tests_native_salsa20
 riscv_tests: tests_riscv_simon tests_riscv_salsa20
 
 # run tests in spike riscv isa simulator
-spike_run_%: %_test_basic_riscv
+spike_run_%: %_test_basic.riscv
 	$(SPIKE_PATH)/spike $(SPIKE_ARGS) $(PK_PATH)/pk $<
 
 clean:
