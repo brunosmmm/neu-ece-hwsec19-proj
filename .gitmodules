@@ -7,3 +7,6 @@
 [submodule "lightweight-hw/chisel/simon"]
 	path = lightweight-hw/chisel/simon
 	url = https://github.com/brunosmmm/simon-chisel.git
+[submodule "riscv-openocd"]
+	path = riscv-openocd
+	url = https://github.com/riscv/riscv-openocd.git
