@@ -46,7 +46,10 @@ fi
 # build openocd
 if [ $BUILD_OPENOCD == "yes" ]; then
     echo "INFO: building openocd now"
-    cd $OPENOCD_PATH && git apply ../misc/0001-ignore-include.patch &&\
+    cd $OPENOCD_PATH
+    if [ ! -e .patched ]; then
+        git apply ../misc/0001-ignore-include.patch && touch .patched
+    fi
     ./bootstrap && cd build && ../configure --enable-remote-bitbang && make -j`nproc` && cd ../..
 else
     echo "INFO: openocd already built, skipping"
