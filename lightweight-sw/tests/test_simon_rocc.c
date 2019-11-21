@@ -4,7 +4,7 @@
 #include <stdio.h>
 #endif
 #include "rocc.h"
-#include "riscv/rvutil.h"
+#include "rvutil.h"
 
 #define ROCC_FUNC_OP_OFFSET 2
 #define ROCC_FUNC_MODE_OFFSET 0

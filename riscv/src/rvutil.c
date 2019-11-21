@@ -1,4 +1,4 @@
-#include "riscv/rvutil.h"
+#include "rvutil.h"
 
 uint64_t rv64_get_cycles(void) {
   uint64_t cycles = 0;

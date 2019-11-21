@@ -1,7 +1,7 @@
 #include "salsa20.h"
 #include "util.h"
 #include <stdint.h>
-#include "riscv/rvutil.h"
+#include "rvutil.h"
 #include "rocc.h"
 
 #define SALSA20_FUNC_SET_KEY1 0x0

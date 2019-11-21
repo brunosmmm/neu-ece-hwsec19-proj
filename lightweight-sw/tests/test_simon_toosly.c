@@ -3,8 +3,8 @@
 #ifndef BAREMETAL
 #include <stdio.h>
 #endif
-#include "riscv/simon_toosly.h"
-#include "riscv/rvutil.h"
+#include "simon_toosly.h"
+#include "rvutil.h"
 
 
 // A 128-bit key

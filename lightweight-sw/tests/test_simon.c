@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 #ifdef RISCV64
-#include "riscv/rvutil.h"
+#include "rvutil.h"
 #endif
 
 #ifndef BAREMETAL

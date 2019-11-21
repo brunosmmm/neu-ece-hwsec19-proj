@@ -1,17 +1,13 @@
-
 PREFIX ?=
 CC ?= $(PREFIX)gcc
-RVCC ?= riscv64-unknown-elf-gcc
 SRCPATH = src
 TESTPATH = tests
 INCLUDES = include
 INCLUDEFLAGS = -I$(INCLUDES)
-RVINCLUDEFLAGS = -Imisc -Iinclude
 CFLAGS ?= -Wall -g $(INCLUDEFLAGS)
-RVCFLAGS ?= -Wall -g $(RVINCLUDEFLAGS) -DRISCV64 -O2
-RVDEBUGPATH = misc
-RVMCFLAGS ?= -I$(RVDEBUGPATH) $(RVCFLAGS) -mcmodel=medany -std=gnu99 -fno-common -fno-builtin-printf
-RVMLDFLAGS=-static -nostdlib -nostartfiles -lgcc
+RVEXTRACFLAGS=$(INCLUDEFLAGS)
+RISCVFILES = ../riscv
+include $(RISCVFILES)/riscv.mk
 
 CIPHERS ?= simon salsa20 speck
 CIPHER_TESTS := $(foreach cipher,$(CIPHERS),$(cipher)_test_*)
@@ -28,15 +24,6 @@ all: native_tests riscv_tests liblightc.a
 %.o: %.c
 	$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
-%.rv.o: %.c
-	$(RVCC) $(RVCFLAGS) -c $< -o $@
-
-%.rvm.o: %.S
-	$(RVCC) $(RVMCFLAGS) -D__ASSEMBLY__=1 -c $< -o $@
-
-%.rvm.o: %.c
-	$(RVCC) -DHWACC_MMIO_BASE=$(HWACC_MMIO_BASE) -DBAREMETAL $(RVMCFLAGS) -c $< -o $@
-
 liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 	$(PREFIX)ar rcs $@ $^
 
@@ -46,26 +33,26 @@ liblightc.a : $(SRCPATH)/simon.o $(SRCPATH)/speck.o $(SRCPATH)/salsa20.o
 %_test_state: $(TESTPATH)/test_%_state.o $(SRCPATH)/%.o $(TESTPATH)/util.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-%_test_rocc.riscv: $(TESTPATH)/test_%_rocc.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
+%_test_rocc.riscv: $(TESTPATH)/test_%_rocc.rv.o $(TESTPATH)/util.rv.o $(RVOBJECTS)
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_rocc.riscvbm: $(TESTPATH)/test_%_rocc.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
-	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
+%_test_rocc.riscvbm: $(TESTPATH)/test_%_rocc.rvm.o $(RVMOBJECTS)
+	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
-%_test_toosly.riscv: $(TESTPATH)/test_%_toosly.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o
+%_test_toosly.riscv: $(TESTPATH)/test_%_toosly.rv.o $(TESTPATH)/util.rv.o $(RVOBJECTS)
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_toosly.riscvbm: $(TESTPATH)/test_%_toosly.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
-	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
+%_test_toosly.riscvbm: $(TESTPATH)/test_%_toosly.rvm.o $(RVMOBJECTS)
+	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
-%_test_mmio.riscvbm: $(TESTPATH)/test_%_mmio.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(BAREMETAL_OBJS)
-	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
+%_test_mmio.riscvbm: $(TESTPATH)/test_%_mmio.rvm.o $(RVMOBJECTS)
+	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
-%_test_basic.riscv: $(TESTPATH)/test_%.rv.o $(SRCPATH)/riscv/rvutil.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/%.rv.o
+%_test_basic.riscv: $(TESTPATH)/test_%.rv.o $(TESTPATH)/util.rv.o $(SRCPATH)/%.rv.o $(RVOBJECTS)
 	$(RVCC) $(RVCFLAGS) -o $@ $^
 
-%_test_basic.riscvbm: $(TESTPATH)/test_%.rvm.o $(SRCPATH)/riscv/rvutil.rvm.o $(SRCPATH)/%.rvm.o $(BAREMETAL_OBJS)
-	$(RVCC) -T $(RVDEBUGPATH)/link.ld $(RVMLDFLAGS) $^ -o $@
+%_test_basic.riscvbm: $(TESTPATH)/test_%.rvm.o $(SRCPATH)/%.rvm.o $(RVMOBJECTS)
+	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
 tests_native_simon: simon_test_basic
 tests_native_salsa20: salsa20_test_basic
