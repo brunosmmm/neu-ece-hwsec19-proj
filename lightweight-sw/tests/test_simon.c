@@ -54,7 +54,7 @@ int main(void) {
   // display plaintext
   print_bytes((uint8_t*)out, sizeof(block64_t));
 #else
-  printf("INFO: ciphertext is 0x%lx\n", *cipher);
+  printf("INFO: ciphertext is 0x%lx\n", *((uint64_t*)cipher));
 #endif
 
   // verify
