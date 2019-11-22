@@ -35,5 +35,6 @@ void simon_mmio_initialize(uint8_t *key, uint8_t config, uint8_t wait);
 uint64_t simon_mmio_get_id(void);
 
 uint64_t simon_mmio_64_128_encrypt_single(uint64_t *block);
+uint64_t simon_mmio_64_128_encrypt_auto(uint64_t *block);
 
 #endif

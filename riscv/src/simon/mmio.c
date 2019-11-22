@@ -44,3 +44,15 @@ uint64_t simon_mmio_64_128_encrypt_single(uint64_t* block) {
   return reg_read64(SIMON_MMIO_BASE + SIMON_MMIO_REG_DATA1) |
            reg_read64(SIMON_MMIO_BASE + SIMON_MMIO_REG_DATA2) << 32;
 }
+
+uint64_t simon_mmio_64_128_encrypt_auto(uint64_t *block) {
+  uint64_t tmp = 0;
+  unsigned int i = 0;
+  reg_write64(SIMON_MMIO_BASE + SIMON_MMIO_REG_DATA1, ((uint32_t *)block)[0]);
+  reg_write64(SIMON_MMIO_BASE + SIMON_MMIO_REG_DATA2, ((uint32_t *)block)[1]);
+
+  SIMON_MMIO_WAIT_READY;
+
+  return reg_read64(SIMON_MMIO_BASE + SIMON_MMIO_REG_DATA1) |
+         reg_read64(SIMON_MMIO_BASE + SIMON_MMIO_REG_DATA2) << 32;
+}
