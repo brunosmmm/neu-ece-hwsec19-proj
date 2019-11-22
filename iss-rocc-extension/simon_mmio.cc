@@ -13,6 +13,10 @@ extern "C" {
 #define SIMON_MMIO_REG_KEY2  0x10
 #define SIMON_MMIO_REG_DATA1 0x18
 #define SIMON_MMIO_REG_DATA2 0x20
+#define SIMON_MMIO_REG_ID    0x28
+
+// some id in register
+static const uint64_t SIMON_ID = 0x53494d4f4e313238;
 
 #define SIMON_MMIO_SCONF_MODE (1<<0)
 #define SIMON_MMIO_SCONF_ENCDEC (1<<1)
@@ -55,6 +59,9 @@ public:
     case SIMON_MMIO_REG_KEY1:
     case SIMON_MMIO_REG_KEY2:
       memset(bytes, 0, len);
+      break;
+    case SIMON_MMIO_REG_ID:
+      memcpy(bytes, &SIMON_ID, len);
       break;
     default:
       return false;
