@@ -14,6 +14,6 @@ evaluate: evaluation
 	$(MAKE) -C $^
 
 clean:
-	$(MAKE) -C lightweight-sw clean && $(MAKE) -C iss-rocc-extension clean && $(MAKE) -C riscv clean && $(MAKE) -C evaluate clean
+	$(MAKE) -C lightweight-sw clean && $(MAKE) -C iss-rocc-extension clean && $(MAKE) -C riscv clean && $(MAKE) -C evaluation clean
 
 .PHONY: clean
