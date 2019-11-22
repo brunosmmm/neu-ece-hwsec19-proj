@@ -23,12 +23,17 @@
 #define SIMON_ID 0x53494d4f4e313238
 #define SIMON_MMIO_BASE 0x10000000
 
-#define SIMON_MMIO_WAIT_READY                                           \
+#define SIMON_MMIO_WAIT_INIT                                            \
   while (!(reg_read64(SIMON_MMIO_BASE + SIMON_MMIO_REG_SCONF) &         \
            SIMON_MMIO_SCONF_INIT))
 
+#define SIMON_MMIO_WAIT_READY                                     \
+    while (!(reg_read64(SIMON_MMIO_BASE + SIMON_MMIO_REG_SCONF) &\
+             SIMON_MMIO_SCONF_READY))
 
 void simon_mmio_initialize(uint8_t *key, uint8_t config, uint8_t wait);
 uint64_t simon_mmio_get_id(void);
+
+uint64_t simon_mmio_64_128_encrypt_single(uint64_t *block);
 
 #endif

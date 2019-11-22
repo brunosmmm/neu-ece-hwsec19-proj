@@ -43,17 +43,30 @@ static uint64_t test_mmio_ecb(void) {
     return 0;
   }
 
-  cycles = rv64_get_cycles();
-  for (i=0;i<TEST_DATA_SIZE;i+=SIMON_64_128_BLOCK_SIZE) {
+  // initialize acc
+  simon_mmio_initialize((uint8_t *)key,
+                        SIMON_MMIO_SCONF_SINGLE | SIMON_MMIO_SCONF_ENCDEC,
+                        1);
 
+  cycles = rv64_get_cycles();
+  for (i=0;i<TEST_DATA_SIZE/sizeof(uint64_t);i++) {
+    //*((uint64_t*)(testData+i)) =
+    tmp =
+      simon_mmio_64_128_encrypt_single((uint64_t*)testData+i);
   }
 
   return rv64_get_cycles() - cycles;
 }
 
+//#define DEBUG
 
 int main(void) {
   uint64_t cycles = 0;
+
+  #ifdef DEBUG
+  volatile int wait = 1;
+  while(wait);
+  #endif
 
   printf("Testing ECB mode in software...");
   cycles = test_sw_ecb();

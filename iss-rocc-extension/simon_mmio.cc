@@ -206,13 +206,10 @@ private:
 
   reg_t get_sconf_reg(void) {
     reg_t reg_val = 0;
+    reg_val |= SIMON_MMIO_SCONF_READY;
     if (this->flags & SIMON_FLAG_INITIALIZED) {
       reg_val |= SIMON_MMIO_SCONF_INIT;
       // no timing, so always ready if initialized
-      reg_val |= SIMON_MMIO_SCONF_READY;
-    }
-    if (this->flags & SIMON_FLAG_READY) {
-      reg_val |= SIMON_MMIO_SCONF_READY;
     }
     if (this->get_mode() == SIMON_128_128_MODE) {
       reg_val |= SIMON_MMIO_SCONF_MODE;
