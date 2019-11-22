@@ -4,7 +4,7 @@ RVEXTRACFLAGS=-I$(LIGHTSW)/include -Iinclude
 include $(RISCVFILES)/simon.mk
 SRCPATH=src
 TARGETS=evaluate1.riscv
-OBJS=$(SRCPATH)/mmio_ecb.rvm.o $(SRCPATH)/sw_ecb.rvm.o
+OBJS=$(SRCPATH)/mmio_ecb.rvm.o $(SRCPATH)/sw_ecb.rvm.o $(SRCPATH)/sw_cbc.rvm.o
 
 all: $(TARGETS)
 
