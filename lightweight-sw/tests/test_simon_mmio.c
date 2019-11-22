@@ -62,7 +62,7 @@ int main(void) {
   reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_KEY2, kw2);
 
   // wait for completion of key expansion
-  WAIT_READY;
+  SIMON_MMIO_WAIT_INIT;
 
   // load test block; immediately performs one round
   reg_write64(HWACC_MMIO_BASE+SIMON_MMIO_REG_DATA1, ((uint32_t*)test_block)[0]);
