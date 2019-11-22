@@ -21,7 +21,7 @@
 #define SIMON_MMIO_SCONF_READY (1 << 4)
 
 #define SIMON_ID 0x53494d4f4e313238
-#define SIMON_MMIO_BASE 0x10000000
+#define SIMON_MMIO_BASE 0x1000000
 
 #define SIMON_MMIO_WAIT_INIT                                            \
   while (!(reg_read64(SIMON_MMIO_BASE + SIMON_MMIO_REG_SCONF) &         \
