@@ -1,13 +1,13 @@
 RISCVFILES=../riscv
 LIGHTSW=../lightweight-sw
 RVEXTRACFLAGS=-I$(LIGHTSW)/include
-include $(RISCVFILES)/riscv.mk
+include $(RISCVFILES)/simon.mk
 SRCPATH=src
 TARGETS=evaluate1.riscv
 
 all: $(TARGETS)
 
-evaluate%.riscv: $(SRCPATH)/evaluate%.rvm.o $(RVMOBJECTS) $(LIGHTSW)/src/simon.rvm.o
+evaluate%.riscv: $(SRCPATH)/evaluate%.rvm.o $(RVMOBJECTS) $(SIMONOBJECTS) $(LIGHTSW)/src/simon.rvm.o
 	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
 clean:

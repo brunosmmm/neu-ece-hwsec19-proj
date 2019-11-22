@@ -1,36 +1,11 @@
-// Test Simon RoCC
+// Test Simon MMIO acc
 #include <stdint.h>
 // #include <stdio.h>
 #include "mmio.h"
 #include "util.h"
 #include "rvutil.h"
-
-#define ROCC_FUNC_OP_OFFSET 2
-#define ROCC_FUNC_MODE_OFFSET 0
-
-#define ROCC_FUNC_INIT (0<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_ENC (1<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_DEC (2<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_FLAGS (3<<ROCC_FUNC_OP_OFFSET)
-#define ROCC_FUNC_HWORD (4<<ROCC_FUNC_OP_OFFSET)
-
-#define SIMON_MODE_64_128 0
-#define SIMON_MODE_128_128 1
-
-#define SIMON_64_128_ROUNDS 44
-#define SIMON_128_128_ROUNDS 68
-
-#define SIMON_MMIO_REG_SCONF 0x0
-#define SIMON_MMIO_REG_KEY1 0x8
-#define SIMON_MMIO_REG_KEY2 0x10
-#define SIMON_MMIO_REG_DATA1 0x18
-#define SIMON_MMIO_REG_DATA2 0x20
-
-#define SIMON_MMIO_SCONF_MODE (1<<0)
-#define SIMON_MMIO_SCONF_ENCDEC (1<<1)
-#define SIMON_MMIO_SCONF_SINGLE (1<<2)
-#define SIMON_MMIO_SCONF_INIT (1<<3)
-#define SIMON_MMIO_SCONF_READY (1<<4)
+#include "simon_primitives.h"
+#include "simon/mmio.h"
 
 #ifndef HWACC_MMIO_BASE
 #define HWACC_MMIO_BASE 0x10000000
@@ -42,8 +17,7 @@
 #ifdef DEBUGSTUCK
 #define WAIT_READY wait_ready(MAX_WAIT)
 #else
-#define WAIT_READY while (!(reg_read64(HWACC_MMIO_BASE+SIMON_MMIO_REG_SCONF)\
-                            & SIMON_MMIO_SCONF_INIT))
+#define WAIT_READY SIMON_MMIO_WAIT_READY
 #endif
 
 // A 128-bit key

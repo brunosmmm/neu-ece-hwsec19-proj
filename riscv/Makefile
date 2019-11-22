@@ -1,6 +1,6 @@
-include riscv.mk
+include simon.mk
 
-all: $(RVMOBJECTS)
+all: $(RVMOBJECTS) $(SIMONOBJECTS)
 
 clean:
 	rm -rf src/*.o
