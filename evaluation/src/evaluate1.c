@@ -1,6 +1,7 @@
 #include "common.h"
 #include "mmio_tests.h"
 #include "sw_tests.h"
+#include "rocc_tests.h"
 #include "simon.h"
 
 #define TEST_DATA_SIZE 1024
@@ -44,6 +45,10 @@ int main(void) {
   } else {
     printf(" done in %lu cycles\n", cycles);
   }
+
+  printf("Testing ECB mode using RoCC acc...");
+  cycles = test_rocc_ecb(TEST_DATA_SIZE, testData);
+  printf(" done in %lu cycles\n", cycles);
 
   return 0;
 }
