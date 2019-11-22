@@ -8,7 +8,7 @@
 #include "simon/mmio.h"
 
 #ifndef HWACC_MMIO_BASE
-#define HWACC_MMIO_BASE 0x10000000
+#define HWACC_MMIO_BASE 0x1000000
 #endif
 
 #define DEBUGSTUCK
