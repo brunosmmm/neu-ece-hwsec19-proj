@@ -34,6 +34,6 @@ test: $(TARGETS)
 	BOOM_SIM=$(SIM_PATH)/$(BOOM_SIM) ROCKET_SIM=$(SIM_PATH)/$(ROCKET_SIM) ./do_tests.sh $^
 
 clean:
-	rm -rf $(SRCPATH)/*.o $(TARGETS)
+	rm -rf $(SRCPATH)/*.o $(TARGETS) *.result_boom *.result_rocket
 
 .PHONY: clean
