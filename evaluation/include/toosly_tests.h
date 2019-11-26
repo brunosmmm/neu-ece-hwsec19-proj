@@ -3,5 +3,5 @@
 
 #include "common.h"
 
-TestResult test_toosly_ecb(unsigned int testSize, uint8_t *testData);
+TestResult test_toosly_ecb(void);
 #endif
