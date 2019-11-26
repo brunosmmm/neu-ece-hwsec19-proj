@@ -4,6 +4,6 @@ BOOM_SIM=simulator-example-SimonBoomConfig
 ROCKET_SIM=simulator-example-SimonRocketConfig
 
 for test in $@; do
-    ./$BOOM_SIM $test > ${test}.result &
-    ./$ROCKET_SIM $test > ${test}.result &
+    ./$BOOM_SIM $test > ${test}.result_boom &
+    ./$ROCKET_SIM $test > ${test}.result_rocket &
 done
