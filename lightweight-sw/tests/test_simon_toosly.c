@@ -3,7 +3,7 @@
 #ifndef BAREMETAL
 #include <stdio.h>
 #endif
-#include "simon_toosly.h"
+#include "simon/toosly.h"
 #include "rvutil.h"
 
 

@@ -5,7 +5,8 @@
 #error "use with RISCV arch only"
 #endif
 
-#include "rocc.h"
+#include "../rocc.h"
+#include <stdint.h>
 
 #define ROCC_FUNC_OP_OFFSET 2
 #define ROCC_FUNC_MODE_OFFSET 0
@@ -33,5 +34,9 @@
 
 #define TOOSLY_INIT(kw1, kw2)                               \
   ROCC_INSTRUCTION_SS(SIMON_TOOSLY_ID, kw1, kw2, FUNC_INIT)
+
+// functions used in test
+void simon_toosly_initialize(uint8_t *key);
+void simon_toosly_64_128_encrypt(uint64_t *start, uint64_t len);
 
 #endif

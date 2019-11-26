@@ -3,7 +3,7 @@ LIGHTSW=../lightweight-sw
 RVEXTRACFLAGS=-I$(LIGHTSW)/include -Iinclude -Wno-implicit-function-declaration
 include $(RISCVFILES)/simon.mk
 SRCPATH=src
-TARGETS=evaluate1.riscv evaluate2.riscv evaluate3.riscv evaluate4.riscv evaluate5.riscv evaluate6.riscv evaluate7.riscv
+TARGETS=evaluate1.riscv evaluate2.riscv evaluate3.riscv evaluate4.riscv evaluate5.riscv evaluate6.riscv evaluate7.riscv evaluate8.riscv
 COMMONOBJS=$(SRCPATH)/common.rvm.o $(RVMOBJECTS) $(SIMONOBJECTS)
 
 SIM_PATH ?= .
@@ -31,6 +31,9 @@ evaluate6.riscv: $(SRCPATH)/evaluate6.rvm.o $(COMMONOBJS) $(SRCPATH)/rocc_ecb.rv
 	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
 evaluate7.riscv: $(SRCPATH)/evaluate7.rvm.o $(COMMONOBJS) $(SRCPATH)/rocc_cbc.rvm.o
+	$(RVCC) $(RVMLDFLAGS) $^ -o $@
+
+evaluate8.riscv: $(SRCPATH)/evaluate8.rvm.o $(COMMONOBJS) $(SRCPATH)/toosly.rvm.o
 	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
 test: $(TARGETS)
