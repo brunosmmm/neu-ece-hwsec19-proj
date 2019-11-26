@@ -1,5 +1,6 @@
 #include "common.h"
 #include "toosly_tests.h"
+#include "simon/toosly.h"
 
 void do_test(void) {
   uint64_t kw1, kw2;
