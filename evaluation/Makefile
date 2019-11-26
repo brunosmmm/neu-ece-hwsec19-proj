@@ -6,6 +6,10 @@ SRCPATH=src
 TARGETS=evaluate1.riscv evaluate2.riscv evaluate3.riscv evaluate4.riscv evaluate5.riscv evaluate6.riscv
 COMMONOBJS=$(SRCPATH)/common.rvm.o $(RVMOBJECTS) $(SIMONOBJECTS)
 
+SIM_PATH ?= .
+BOOM_SIM ?= simulator-example-SimonBoomConfig
+ROCKET_SIM ?= simulator-example-SimonRocketConfig
+
 all: $(TARGETS)
 
 evaluate1.riscv: $(SRCPATH)/evaluate1.rvm.o $(COMMONOBJS) $(LIGHTSW)/src/simon.rvm.o $(SRCPATH)/sw_ecb.rvm.o
@@ -27,7 +31,7 @@ evaluate6.riscv: $(SRCPATH)/evaluate6.rvm.o $(COMMONOBJS) $(SRCPATH)/rocc_ecb.rv
 	$(RVCC) $(RVMLDFLAGS) $^ -o $@
 
 test: $(TARGETS)
-	./do_tests.sh $^
+	BOOM_SIM=$(SIM_PATH)/$(BOOM_SIM) ROCKET_SIM=$(SIM_PATH)/$(ROCKET_SIM) ./do_tests.sh $^
 
 clean:
 	rm -rf $(SRCPATH)/*.o $(TARGETS)
