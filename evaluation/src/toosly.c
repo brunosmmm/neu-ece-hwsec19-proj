@@ -7,7 +7,11 @@ TestResult test_toosly_ecb(unsigned int testSize, uint8_t *testData) {
   simon_toosly_initialize((uint8_t*)key);
 
   test_start(&result);
-  simon_toosly_64_128_encrypt((uint64_t*)testData, testSize);
+  // encrypt
+  TOOSLY_ENC(testData, testSize);
+
+  // serialize
+  asm volatile("fence");
   test_end(&result);
   return result;
 }
