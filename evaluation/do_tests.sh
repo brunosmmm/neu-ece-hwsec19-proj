@@ -15,8 +15,8 @@ wait
 
 rm -rf boom.results rocket.results
 for test in "${@:1}"; do
-    sed -r 's/[^0-9]*([0-9]+)\s+cycles$/\1/' $test.result_boom >> boom.results
-    sed -r 's/[^0-9]*([0-9]+)\s+cycles$/\1/' $test.result_rocket >> rocket.results
+    sed -r 's/[^0-9]*([0-9]+)\s+cycles,\s*([0-9]+).*$/\1, \2/' $test.result_boom >> boom.results
+    sed -r 's/[^0-9]*([0-9]+)\s+cycles,\s*([0-9]+).*$/\1, \2/' $test.result_rocket >> rocket.results
 done
 
 echo "Done"

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "rvutil.h"
 
 // Evaluation test #!
 // Encrypt 1 kB of data
@@ -11,6 +12,21 @@ const uint8_t iv[8] = {0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7};
 // bogus data array
 uint8_t testData[TEST_DATA_SIZE];
 int err = 0;
+
+inline void test_start(TestResult *data) {
+  if (!data) return;
+  data->cycles = rv64_get_cycles();
+  data->instret = rv64_get_instret();
+}
+
+inline void test_end(TestResult *data) {
+  uint64_t cycles, instret;
+  if (!data) return;
+  cycles = rv64_get_cycles();
+  instret = rv64_get_instret();
+  data->cycles = cycles - data->cycles;
+  data->instret = instret - data->instret;
+}
 
 int main(void) {
   do_test();

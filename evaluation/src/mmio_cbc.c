@@ -1,10 +1,10 @@
 #include "common.h"
-#include "rvutil.h"
 #include "simon/mmio.h"
 
-uint64_t test_mmio_cbc_single(unsigned int testSize, uint8_t *testData) {
-  uint64_t tmp = 0, cycles = 0;
+TestResult test_mmio_cbc_single(unsigned int testSize, uint8_t *testData) {
+  uint64_t tmp = 0;
   unsigned int i = 0;
+  TestResult result;
 #ifdef MMIO_CHECK
   tmp = simon_mmio_get_id();
   if (tmp != SIMON_ID) {
@@ -17,7 +17,7 @@ uint64_t test_mmio_cbc_single(unsigned int testSize, uint8_t *testData) {
   simon_mmio_initialize((uint8_t *)key,
                         SIMON_MMIO_SCONF_SINGLE | SIMON_MMIO_SCONF_ENCDEC, 1);
 
-  cycles = rv64_get_cycles();
+  test_start(&result);
   for (i = 0; i < testSize; i += SIMON_64_128_BLOCK_SIZE) {
     if (i == 0) {
       tmp = *((uint64_t *)testData) ^ *((uint64_t *)iv);
@@ -27,5 +27,6 @@ uint64_t test_mmio_cbc_single(unsigned int testSize, uint8_t *testData) {
     }
   }
 
-  return rv64_get_cycles() - cycles;
+  test_end(&result);
+  return result;
 }
