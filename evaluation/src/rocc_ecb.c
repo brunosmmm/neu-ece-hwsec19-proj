@@ -3,9 +3,6 @@
 #include "rocc.h"
 #include "simon/rocc.h"
 
-extern const uint8_t key[];
-extern int err;
-
 uint64_t test_rocc_ecb(unsigned int testSize, uint8_t *testData) {
   uint64_t tmp = 0, cycles = 0;
   uint64_t kw1, kw2;

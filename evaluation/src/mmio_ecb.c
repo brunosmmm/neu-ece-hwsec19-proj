@@ -2,9 +2,6 @@
 #include "rvutil.h"
 #include "common.h"
 
-extern const uint8_t key[];
-extern int err;
-
 uint64_t test_mmio_ecb_single(unsigned int testSize, uint8_t* testData) {
   uint64_t tmp = 0, cycles = 0;
   unsigned int i = 0;

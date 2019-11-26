@@ -2,9 +2,6 @@
 #include "simon.h"
 #include "simon_primitives.h"
 
-extern const uint8_t key[];
-extern const uint8_t iv[];
-
 uint64_t test_sw_cbc(unsigned int testSize, uint8_t *testData) {
   unsigned int i = 0;
   uint64_t cycles = 0;

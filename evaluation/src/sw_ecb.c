@@ -2,8 +2,6 @@
 #include "simon.h"
 #include "common.h"
 
-extern const uint8_t key[];
-
 uint64_t test_sw_ecb(unsigned int testSize, uint8_t* testData) {
   unsigned int i = 0;
   uint64_t cycles = 0;
