@@ -35,6 +35,9 @@
   \node (dsc) [fit=(hwacc1)(hwacc2), rounded corners, dashed,
   draw, minimum height=60pt, label={[align=center]90:{Domain\\ specific}}] {};
 
+  \draw[-latex] (hwacc1.west) -- ++(-1,0) node [anchor=south west] {\tiny int};
+  \draw[-latex] (hwacc2.west) -- ++(-0.25, 0) -- ++(0, 0.9) -- ++(-2.75, 0) node [anchor=south west] {\tiny int};
+
 \end{tikzpicture}
 
 \end{document}
