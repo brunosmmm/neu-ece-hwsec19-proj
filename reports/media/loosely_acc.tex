@@ -11,6 +11,8 @@
   \tikzstyle{hwacc}=[PE, draw=OliveGreen, fill=OliveGreen!20]
   \tikzstyle{bus}=[double arrow, draw=Orange, fill=Orange!20, thick,
   minimum width=20pt, double arrow head extend=2pt]
+  \tikzstyle{accint}=[draw=OliveGreen, fill=OliveGreen!10, outer sep=1pt, inner sep=1pt,
+  node distance=0.5pt, opacity=0.85]
 
   \begin{scope}[name=soc, local bounding box=socbb]
   \node (core2) at (0.4,0.4) [core] {};
@@ -18,6 +20,18 @@
   \node (core0) at (0,0) [core] {CPU};
 
   \node (hwacc1) at (3,0.2) [hwacc] {ACC};
+  \begin{scope}[name=completeacc, local bounding box=accbb, shift={(3, 0.2)}]
+    \node (reg0) [accint, minimum width=25pt, xshift=-5pt, minimum height=5pt, font=\tiny] {REG 0};
+    \node (reg1) [accint, minimum width=25pt, minimum height=5pt, below=of reg0, font=\tiny] {REG 1};
+    \node (reg2) [accint, minimum width=25pt, minimum height=5pt, below=of reg1, font=\tiny] {REG N};
+    \node (spm) [accint, minimum height=15pt, minimum width=5pt, align=center,
+    right=of reg0.north east, font=\tiny, anchor=north west] {S\\P\\M};
+    \node (accpe) [accint, minimum width=10pt, minimum height=10pt, above=of reg0.north west,
+    anchor=south west, font=\tiny] {PE};
+    \node (accctl) [accint, minimum width=10pt, minimum height=10pt, above=of spm.north east,
+    anchor=south east, font=\tiny] {CTL};
+  \end{scope}
+
   \node (hwacc2) at (5,0.2) [hwacc] {ACC};
 
   \node (mainbus) at (-1, -2) [bus, anchor=west, minimum height=200pt] {};
