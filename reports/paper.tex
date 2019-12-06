@@ -1,0 +1,129 @@
+\documentclass[10pt,conference]{IEEEtran}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{standalone}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{tabu}
+\usepackage[letterpaper]{geometry}
+\usepackage[colorlinks]{hyperref}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2cm,rmargin=2cm,columnsep=0.8cm}
+\usetikzlibrary{positioning, calc, shapes, fit, backgrounds, patterns}
+
+\title{\textbf{Hardware accelerator topologies in heterogeneous systems: an evaluation in the
+    security domain}}
+\author{Bruno Morais}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  Hardware accelerators (HWACCs) have driven performance gains for
+  domain specific applications which leverage highly optimized computation
+  cores. However, the traditional accelerator access topology as an add-on to
+  general purpose processors through shared memory space/bus, reveals performance
+  issues as the number of HWACCs grow and systems become
+  communication-bound.
+  On the other hand, efficient development and research of HWACCs
+  that are closer to a general purpose processor's datapath is seen as a
+  prohibitive task due to the required microarchitecture knowledge and lack of
+  tools to explore the design space. This has in turn hindered the exploration of
+  such architectures for gains in either performance or security spectrums.
+  RISC-V projects made available in the last few years provide a framework that
+  greatly eases microarchitecture research, enabling further experimentation
+  into security and performance aspects for heterogeneous platforms.
+  This work uses a customized RISC-V SoC to explore performance trade-offs
+  between different HWACC topologies (in-datapath, memory-mapped) for embedded
+  systems in the security domain by implementing an IP core for cryptographic
+  primitive acceleration.
+  % results also go in here
+
+\end{abstract}
+
+\section{Introduction}
+
+\section{Related work}
+
+\subsection{Hardware accelerators?}
+% Tightly vs loosely coupled hwaccs
+
+\subsection{RISC-V instruction set extensions}
+% Xcrypto
+
+\section{Background}
+
+\subsection{Heterogeneous systems and HWACCs}
+
+\begin{figure}
+  \centering
+  \include{media/loosely_acc}
+  \caption{Loosely-coupled HWACCs: typical memory mapped HWACC usage in a heterogenous architecture.}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \scalebox{0.75}{
+  \begin{minipage}{0.5\textwidth}
+    \centering
+    \include{media/tightly_acc}
+  \end{minipage}
+  }
+  \caption{Tightly-coupled HWACCs: accelerator is moved into CPU datapath,
+    similar to Functional Units (FUs).}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \include{media/hybrid_acc}
+  \caption{Hybrid cryptographic HWACCs: \textbf{upper}: HWACC is directly accessible through CPU datapath and
+    integrated with memory hierarchy; \textbf{lower}: two operation modes; I: batch
+  background processing of memory region (CPU not taxed); II: cryptographic
+  operation where plaintext is only visible inside CPU datapath.}
+\end{figure}
+
+\subsection{Embedded security: lightweight ciphers}
+
+The industry standard ciphers might impose too much of a burden on deeply
+embedded, low power systems that need the ability to communicate securely over
+an unsecured channel. Thus, different organizations have hosted competitions to
+foster the development of lightweight ciphers, targeting both resource-limited
+software and hardware implementations.
+
+In this evaluation, it is assumed that the object of study is such a system,
+with strict area and power limitations. The Simon~\cite{Beaulieu2015} cipher family is chosen as a
+lightweight cipher; it is a hardware-optimized cipher family developed by the
+NSA. Although faced with controversies due to polarized views towards the
+authors, it is an ISO standardized cipher.
+
+\subsection{RISC-V ecosystem}
+
+\section{Experimental setup}
+
+
+\section{Evaluation}
+
+\section{Future work}
+
+As future work, there is much room for improvement; better understanding of how
+to leverage the memory coherence hierarchy in the hybrid accelerator model
+should lead to better performance.
+
+Also, a set of different, reutilizable cryptographic primitives can be further
+explored and integrated into a larger multi-accelerator framework for
+acceleration of other demanded cryptographic functions such as hash functions
+and possible compositions of primitives for message authentication, for instance.
+
+These require a more thorough and complex modification of the available
+toolchain and datapath microarchitecture, as it is likely that the standard RoCC
+interface will not be able to provide the desired flexibility and control
+granularity levels for detailed exploration.
+
+\section{Conclusions}
+
+\bibliography{paper}
+\bibliographystyle{ieeetr}
+
+\end{document}
