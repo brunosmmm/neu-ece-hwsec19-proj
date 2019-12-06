@@ -31,23 +31,17 @@
     \node (accctl) [accint, minimum width=10pt, minimum height=10pt, above=of spm.north east,
     anchor=south east, font=\tiny] {CTL};
   \end{scope}
-
-  \node (hwacc2) at (5,0.2) [hwacc] {ACC};
-
-  \node (mainbus) at (-1, -2) [bus, anchor=west, minimum height=200pt] {};
-
+  \node (mainbus) at (-1, -2) [bus, anchor=west, minimum height=140pt] {};
 
   \node at (core0.south) [bus, rotate=90, anchor=east, scale=0.5, minimum height=57pt] {};
   \node at (hwacc1.south) [bus, rotate=90, anchor=east, scale=0.5, minimum height=68pt] {};
-  \node at (hwacc2.south) [bus, rotate=90, anchor=east, scale=0.5, minimum height=68pt] {};
 
   \node (gpc) [fit=(core0)(core1)(core2), rounded corners,
   dashed, draw, minimum height=60pt, label={[align=center]90:{General\\ purpose}}] {};
-  \node (dsc) [fit=(hwacc1)(hwacc2), rounded corners, dashed,
+  \node (dsc) [fit=(hwacc1), rounded corners, dashed, inner sep=10pt,
   draw, minimum height=60pt, label={[align=center]90:{Domain\\ specific}}] {};
 
   \draw[-latex] (hwacc1.west) -- ++(-1,0) node [anchor=south west] {\tiny int};
-  \draw[-latex] (hwacc2.west) -- ++(-0.25, 0) -- ++(0, 0.9) -- ++(-2.75, 0) node [anchor=south west] {\tiny int};
   \end{scope}
 
   \node (dram) [draw, rounded corners, below= of mainbus, minimum width=60pt,
@@ -55,7 +49,7 @@
 
   \node at (dram.north) [bus, rotate=-90, anchor=east, scale=0.5, minimum height=35pt] {};
 
-  \node [fit=(socbb), draw, dashed, rounded corners, thick, inner sep=6pt, label={320:SoC}] {};
+  \node [fit=(socbb), draw, dashed, rounded corners, thick, inner sep=6pt, label={300:SoC}] {};
 
 \end{tikzpicture}
 
