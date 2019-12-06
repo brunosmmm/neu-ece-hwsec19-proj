@@ -11,16 +11,16 @@
   \begin{scope}[name=datapath, local bounding box=dpathbb]
 
     % busses
-    \draw[ultra thick] (0, 1) -- (9, 1);
-    \draw[ultra thick] (0, -5.5) -- (9, -5.5);
-    \draw[ultra thick] (1, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- (1, -0.5);
-    \draw[ultra thick] (3.75, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, -3.5);
-    \draw[ultra thick] (6, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, -3.5);
-    \draw[ultra thick] (8.25, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- (8.25, -1.75);
+    \draw[ultra thick] (0, 0.25) -- ++(9, 0);
+    \draw[ultra thick] (0, -5) -- ++(9, 0);
+    \draw[ultra thick] (1, 0.25) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, -1);
+    \draw[ultra thick] (3.75, 0.25) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, -2.5);
+    \draw[ultra thick] (6, 0.25) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, -2.5);
+    \draw[ultra thick] (8.25, 0.25) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- (8.25, -1.75);
 
-    \draw[ultra thick] (1, -5.5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2);
-    \draw[ultra thick] (4.65, -5.5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2.5);
-    \draw[ultra thick] (8.25, -5.5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2.5);
+    \draw[ultra thick] (1, -5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2);
+    \draw[ultra thick] (4.65, -5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2.5);
+    \draw[ultra thick] (8.25, -5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2.5);
 
 
     % register file drawing
