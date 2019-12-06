@@ -21,9 +21,9 @@
 
   \node (hwacc1) at (3,0.2) [hwacc] {ACC};
   \begin{scope}[name=completeacc, local bounding box=accbb, shift={(3, 0.2)}]
-    \node (reg0) [accint, minimum width=25pt, xshift=-5pt, minimum height=5pt, font=\tiny] {REG 0};
-    \node (reg1) [accint, minimum width=25pt, minimum height=5pt, below=of reg0, font=\tiny] {REG 1};
-    \node (reg2) [accint, minimum width=25pt, minimum height=5pt, below=of reg1, font=\tiny] {REG N};
+    \node (reg0) [accint, minimum width=25pt, xshift=-5pt, minimum height=5pt, font=\tiny] {MMR 0};
+    \node (reg1) [accint, minimum width=25pt, minimum height=5pt, below=of reg0, font=\tiny] {MMR 1};
+    \node (reg2) [accint, minimum width=25pt, minimum height=5pt, below=of reg1, font=\tiny] {MMR N};
     \node (spm) [accint, minimum height=15pt, minimum width=5pt, align=center,
     right=of reg0.north east, font=\tiny, anchor=north west] {S\\P\\M};
     \node (accpe) [accint, minimum width=10pt, minimum height=10pt, above=of reg0.north west,
