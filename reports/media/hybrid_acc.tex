@@ -31,6 +31,20 @@
         anchor=east, minimum height=70pt, minimum width=70pt, label={[align=center]270:{CPU\\Datapath}}] {};
       \end{scope}
 
+      % FU
+      \begin{scope}[shift={(-3.5, 0.75)}, rotate=-90, scale=0.2]
+        \draw [fill=white, thick] (0, 0) -- (0, -1.75) -- (0.75, -2.5) -- (0, -3.25) -- (0, -5) -- (1.5, -3.5) -- (1.5, -1.5)
+        -- cycle;
+      \end{scope}
+
+      %RF
+      \begin{scope}[shift={(-4.2125, 0)}, scale=0.2]
+        \draw[fill=white, thick] (0,0) rectangle (2, -4);
+        \foreach \i in {1,...,8} {
+          \draw[thick] (0, -0.5*\i) -- (2, -0.5*\i);
+        }
+      \end{scope}
+
       \node (dmaport) at (acc.east) [port, minimum height=20pt, align=center,
       rotate=90] {DMA};
 
@@ -52,7 +66,8 @@
 
   \begin{scope}[name=op2, shift={(0.5, -9.5)}, local bounding box=mode2bb]
     \node (acc2) [hwacc, minimum size=40pt] {ACC};
-    \node (dp) [draw=NavyBlue, thick, dashed, rounded corners, left=of acc2, minimum size=40pt, label={270:CPU Datapath}] {};
+    \node (dp) [draw=NavyBlue, thick, dashed, rounded corners, left=of acc2, minimum size=40pt, label={270:CPU Datapath},
+    fill=NavyBlue!10] {};
     \draw[-latex, very thick] (dp.20) -- node [anchor=south west, rotate=45, align=center, font=\footnotesize] {(data)\\plaintext} (dp.20 -| acc2.west);
     \draw[-latex, very thick] (dp.340 -| acc2.west) -- (dp.340);
     \node (mconn2) at (acc2.east) [bibus, scale=0.5, anchor=west, minimum height=50pt] {};
