@@ -16,30 +16,29 @@
   minimum width=20pt, single arrow head extend=2pt, rotate=180]
   \tikzstyle{hwacc}=[rounded corners, draw=OliveGreen, fill=OliveGreen!10, thick]
 
-  \begin{scope}[name=accstruct]
-    \begin{scope}[name=acc, local bounding box=accbb]
-      \node (accpe) [accelement] {PE};
-      \node (accctl) at (0, -3) [accelement] {CTL};
+  \begin{scope}[shift={(1, 0)}]
+    \begin{scope}[name=accstruct]
+      \begin{scope}[name=acc, local bounding box=accbb]
+        \node (accpe) [accelement] {Datapath};
+      \end{scope}
+
+      \node (accctl) at (-2.25, 0) [accelement, fill opacity=0.8, text opacity=1] {Control};
+
+      \begin{scope}[on background layer]
+        \node (acc) [hwacc, fit=(accbb),
+        minimum width=120pt, inner sep=10pt, label={270:Hybrid Accelerator}] {};
+        \node (cpudp) at (-2.25,0)  [draw=NavyBlue, fill=NavyBlue!10, thick, dashed, rounded corners,
+        anchor=east, minimum height=70pt, minimum width=70pt, label={[align=center]270:{CPU\\Datapath}}] {};
+      \end{scope}
+
+      \node (dmaport) at (acc.east) [port, minimum height=20pt, align=center,
+      rotate=90] {DMA};
+
+      \node (memconn) [bibus, anchor=west, minimum height=30pt, label={[align=center,font=\footnotesize]0:{Main\\memory}}] at (dmaport.south) {};
     \end{scope}
-
-    \begin{scope}[on background layer]
-      \node (acc) [hwacc, fit=(accbb),
-      minimum width=140pt, inner sep=10pt, label={270:Hybrid Accelerator}] {};
-    \end{scope}
-
-    \node (dmaport) at (acc.east) [port, minimum height=20pt, align=center,
-    rotate=90] {DMA};
-    \node (pathin) at (acc.west |- accpe.west) [port, rotate=270, anchor=south,
-    minimum height=15pt] {};
-    \node (pathout) at (acc.west |- accctl.west) [port, rotate=270, anchor=south,
-    minimum height=15pt] {};
-
-    \node (memconn) [bibus, anchor=west, minimum height=40pt, label={[align=center]0:{Main\\memory}}] at (dmaport.south) {};
-    \node (fromdp) [ibus, anchor=east, minimum height=40pt, label={[align=center]180:{From CPU\\datapath}}] at (pathin.south) {};
-    \node (todp) [obus, anchor=west, minimum height=40pt, label={[align=center]0:{To CPU\\datapath}}] at (pathout.south) {};
   \end{scope}
 
-  \begin{scope}[name=op1, shift={(0, -7)}, local bounding box=mode1bb]
+  \begin{scope}[name=op1, shift={(0.5, -4.5)}, local bounding box=mode1bb]
     \node (acc1) [hwacc, minimum size=40pt] {ACC};
     \node (inst) [draw, thick, rounded corners, left=of acc1, minimum size=40pt] {\tiny Instruction};
     \draw[-latex, very thick] (inst) -- node [anchor=south west, rotate=45, font=\footnotesize, align=center] {(control)\\addr,len} (acc1);
@@ -51,7 +50,7 @@
 
   \node [draw,dashed, thick, fit=(mode1bb), inner sep=10pt, minimum width=250pt, label={270:Mode I: batch (de/en)crypt}, xshift=-12pt] {};
 
-  \begin{scope}[name=op2, shift={(0, -12)}, local bounding box=mode2bb]
+  \begin{scope}[name=op2, shift={(0.5, -9.5)}, local bounding box=mode2bb]
     \node (acc2) [hwacc, minimum size=40pt] {ACC};
     \node (dp) [draw=NavyBlue, thick, dashed, rounded corners, left=of acc2, minimum size=40pt, label={270:CPU Datapath}] {};
     \draw[-latex, very thick] (dp.20) -- node [anchor=south west, rotate=45, align=center, font=\footnotesize] {(data)\\plaintext} (dp.20 -| acc2.west);
