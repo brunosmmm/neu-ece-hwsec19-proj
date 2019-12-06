@@ -45,6 +45,24 @@
 
 \section{Introduction}
 
+\begin{figure}
+  \centering
+  \include{media/loosely_acc}
+  \caption{Loosely-coupled HWACCs: typical memory mapped HWACC usage in a heterogenous architecture.}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \resizebox{0.3\textwidth}{!}{
+    \begin{minipage}{0.5\textwidth}
+      \centering
+      \include{media/tightly_acc}
+    \end{minipage}
+  }
+  \caption{Tightly-coupled HWACCs: accelerator is moved into CPU datapath,
+    similar to Functional Units (FUs).}
+\end{figure}
+
 \section{Related work}
 
 \subsection{Hardware accelerators?}
@@ -55,34 +73,6 @@
 
 \section{Background}
 
-\subsection{Heterogeneous systems and HWACCs}
-
-\begin{figure}
-  \centering
-  \include{media/loosely_acc}
-  \caption{Loosely-coupled HWACCs: typical memory mapped HWACC usage in a heterogenous architecture.}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \scalebox{0.75}{
-  \begin{minipage}{0.5\textwidth}
-    \centering
-    \include{media/tightly_acc}
-  \end{minipage}
-  }
-  \caption{Tightly-coupled HWACCs: accelerator is moved into CPU datapath,
-    similar to Functional Units (FUs).}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \include{media/hybrid_acc}
-  \caption{Hybrid cryptographic HWACCs: \textbf{upper}: HWACC is directly accessible through CPU datapath and
-    integrated with memory hierarchy; \textbf{lower}: two operation modes; I: batch
-  background processing of memory region (CPU not taxed); II: cryptographic
-  operation where plaintext is only visible inside CPU datapath.}
-\end{figure}
 
 \subsection{Embedded security: lightweight ciphers}
 
@@ -100,16 +90,168 @@ authors, it is an ISO standardized cipher.
 
 \subsection{RISC-V ecosystem}
 
+The RISC-V ecosystem is rapidly growing, with many different implementations of
+the RISC-V ISA standard currently available online. The complete GNU toolchain
+is also available for the architecture and its standard extensions.
+
+There are several alternatives in order to assemble a complete System on Chip
+(SoC) for experimentation or synthesis purposes. Several different vendors /
+open source community-provided designs can be used to kickstart development.
+
+To assemble an entire SoC for cycle-accurate simulation, UC Berkeley's Chipyard~\cite{Chipyard}
+is chosen.
+
+\begin{figure}
+  \centering
+  \resizebox{0.45\textwidth}{!}{
+    \begin{minipage}{0.5\textwidth}
+      \centering
+      \include{media/hybrid_acc}
+    \end{minipage}
+  }
+  \caption{Hybrid crypto HWACCs: \textbf{upper}: HWACC is directly accessible through CPU datapath and
+    integrated with memory hierarchy; \textbf{lower}: two operation modes; I: batch
+    background processing of memory region (CPU not taxed); II: cryptographic
+    operation where plaintext is only visible inside CPU datapath.}
+  \label{fig:hybrid}
+\end{figure}
+
+\section{The Hybrid Crypto Accelerator}
+
+Going one step further than the two classic topologies used for accelerators
+discussed previously, we present a slightly different hybrid approach which has
+some interesting characteristics. Figure~\ref{fig:hybrid} shows the concept and
+possible operation modes of the hybrid crypto accelerator.
+
+The hybrid crypto accelerator is distinct from the tightly-coupled topology in
+the way that it has a DMA port for direct access to the coherent memory
+hierarchy. This allows the accelerator to directly request data to be loaded and
+stored, enabling two different modes of operation.
+
+\subsection{Operation mode I: batch processing}
+
+In this operation mode, specific instructions configure the accelerator to
+batch perform encryption or decryption over a memory region. The accelerator
+then proceeds to work while the CPU is left free for any other tasks that might
+be waiting for CPU time.
+
+
+\subsection{Operation mode II: cryptographic operation}
+
+Differently from mode I, this mode allows for operation in the security domain,
+isolating plaintext and ciphertext completely in the CPU datapath and memory.
+
+In this mode, data is moved to/from memory by the CPU, through the accelerator,
+which transparently encrypts or decrypts the data stored/loaded. Note that in
+this mode, actual data (words) in the CPU datapath is passed in/out of the
+accelerator, not control (load/store).
+
 \section{Experimental setup}
 
+In order to understand the area and performance trade-offs between the usage of
+different system topologies, both a reference software implementation and an IP
+core that performs the Simon cipher are implemented and tested on a RISC-V core.
+
+The first step is to verify basic functionality by means of functional simulations.
+
+\subsection{Functional simulation}
+
+Functional simulation is accomplished with Spike~\cite{spike}, which is a RISC-V
+instruction set simulator. Spike allows for execution of riscv64 binaries, and
+also allows for implementation of C++ extensions that emulate the
+functionalities of both memory-mapped peripherals and RoCC accelerators. Both
+extensions are implemented to emulate functionality of different Simon
+accelerators, and checked for result correctness against the reference software
+implementation.
+
+
+\subsection{Simon HWACCs}
+
+After the functional simulations are performed with correct results, the Simon
+cipher IP core was implemented in Chisel~\cite{chisel}. This was a necessary
+choice since the infrastructure used to build the SoC to be evaluated is
+completely built using Chisel.
+
+The core Simon cipher functionality is implemented as the core IP and is
+re-utilized to build three different accelerator types: memory-mapped
+(loosely-coupled), RoCC (tightly-coupled and hybrid). In essence the the
+accelerators are built by constructing wrappers around the common core.
+
+The first two accelerators have similar functionality: the user must initialize the
+accelerator by storing a key, at which point the acelerator core performs
+necessary key expansion and waits for input data that is to be
+encrypted/decrypted. Those accelerators support two different Simon widths:
+Simon64/128 and Simon128/128.
+
+The memory-mapped accelerator can operate in two different ways: i) unattended
+operation --- ECB mode only, in which all necessary rounds are performed over a word until
+completion of encryption/decryption process, or ii) interactive operation, where
+software issues one round at a time, which enables software implementation of
+CBC or other modes.
+
+The tightly-coupled accelerator only operates interactively; that is, the
+software manually issues an instruction that computes a round repetitively
+until the complete process is done; encryption modes are thus
+implemented in software.
+
+The hybrid accelerator also needs to be initialized with a key. However, due to
+development constraints, the accelerator only supports Simon64/128 in ECB mode.
+
+
+\subsection{Full-scale SoC simulation}
+
+Chipyard is used to generate synthesizable Verilog for the
+entire SoC, including RISC-V CPU core and accelerators under test. The tool also
+contains the necessary scripts to produce a cycle-accurate simulation of the
+SoC, compiled with Verilator. After configuration of the environment, the Simon
+chisel implementation is integrated in the SoC.
+
+In Chipyard the option of either building the SoC using in-order (Rocket) or
+out-of-order (BOOM) cores is given to the user. SoCs are built using both
+alternatives for evaluation.
+
+\subsection{Synthesis metrics}
+
+Unfortunately, while the output from Chipyard is indeed synthesizable Verilog,
+no support for targeting FPGA boards is readily available. Instead, the focus of
+the tool is to enable VLSI flows for taping out custom ASICs.
+
+However, Chipyard shares much of common RISC-V infrastructure that is maintained
+by the CHIPS Alliance, it is possible to modify other projects that also use the
+same infrastructure, and do target FPGA boards to include our accelerators. This
+flow is used mainly for area evaluation purposes and not fully concerned with
+actually running code on an FPGA prototyping target. SiFive's Freedom Platform
+dev kit is chosen for this task.
 
 \section{Evaluation}
+
+\subsection{Security implications}
+
+It is of note that while this work implements a cryptographic primitive that can
+be used in-hardware to enable acceleration of ciphers, it is a proof-of-concept
+level rudimentary implementation.
+
+Under more critical scrutiny there would be a few immediately reconizeable
+issues:
+
+\begin{itemize}
+  \item In some configurations, accelerators can only perform in ECB mode in
+    hardware, limiting both security and performance. To overcome this, the
+    accelerator implementation needs to be extended to be more flexible/complex
+    and include such operation modes.
+  \item Due to the use of generic instruction / RoCC interface, accelerators
+    can be exploited by attacker at unprivileged level. To overcome this,
+    accelerators and toolchain must be modified to use customized instructions,
+    which can be configured for certain privilege levels only
+\end{itemize}
 
 \section{Future work}
 
 As future work, there is much room for improvement; better understanding of how
 to leverage the memory coherence hierarchy in the hybrid accelerator model
-should lead to better performance.
+should lead to better performance; accelerator can be developed further to
+accept more encryption modes, including parallelization; security can be
+hardened by enforcing privilege levels at the hardware level, to name a few.
 
 Also, a set of different, reutilizable cryptographic primitives can be further
 explored and integrated into a larger multi-accelerator framework for
