@@ -14,11 +14,12 @@
     \draw[ultra thick] (0, 1) -- (9, 1);
     \draw[ultra thick] (0, -5.5) -- (9, -5.5);
     \draw[ultra thick] (1, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- (1, -0.5);
-    \draw[ultra thick] (5, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- (5, -0.75);
+    \draw[ultra thick] (3.75, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, -3.5);
+    \draw[ultra thick] (6, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, -3.5);
     \draw[ultra thick] (8.25, 1) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- (8.25, -1.75);
 
     \draw[ultra thick] (1, -5.5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2);
-    \draw[ultra thick] (5, -5.5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2);
+    \draw[ultra thick] (4.65, -5.5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2.5);
     \draw[ultra thick] (8.25, -5.5) node [circle, minimum size=4pt, fill, inner sep=0pt] {} -- ++(0, 2.5);
 
 
@@ -34,13 +35,15 @@
     \end{scope}
 
     % functional units
-    \begin{scope}[name=fu, local bounding box=fubb, shift={(4, 0)}]
-      \node at (0.25, 0.25) [anchor=south] {FUs};
-      \begin{scope}[shift={(0.25, 0.15)}]
-      \draw [fill=white, thick] (0, 0) -- (0, -1.75) -- (0.75, -2.5) -- (0, -3.25) -- (0, -5) -- (1.5, -3.5) -- (1.5, -1.5) -- cycle;
+    \begin{scope}[name=fu, local bounding box=fubb, shift={(6.5, -2)}]
+      \node at (-1.5, 0.25) [anchor=south] {FUs};
+      \begin{scope}[shift={(0.25, 0.15)}, rotate=-90, scale=0.75]
+        \draw [fill=white, thick] (0, 0) -- (0, -1.75) -- (0.75, -2.5) -- (0, -3.25) -- (0, -5) -- (1.5, -3.5) -- (1.5, -1.5)
+        -- cycle;
       \end{scope}
-      \begin{scope}
-        \draw [fill=white, thick] (0, 0) -- node [coord] (alua) {} (0, -1.75) -- (0.75, -2.5) -- (0, -3.25) -- node [coord] (alub) {}
+      \begin{scope}[rotate=-90, scale=0.75]
+        \draw [fill=white, thick] (0, 0) -- node [coord] (alua) {} (0, -1.75) -- (0.75, -2.5) -- (0, -3.25)
+        -- node [coord] (alub) {}
         (0, -5) -- (1.5, -3.5) -- node [coord] (alux) {} (1.5, -1.5) -- cycle;
       \end{scope}
     \end{scope}
