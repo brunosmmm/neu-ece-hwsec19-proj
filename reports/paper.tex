@@ -96,8 +96,8 @@ Figure~\ref{fig:simonround} shows the Feistel stepping of its round function.
 \begin{figure}
   \centering
   \include{media/simonround}
-  \caption{Simon's round function Feistel stepping. \textbf{S\textsuperscript{i}} are
-    circular left shifts by i bits; \textbf{\&} is a bitwise \texttt{AND}
+  \caption{Simon's round function Feistel stepping. \textbf{S\textsuperscript{j}} are
+    circular left shifts by j bits; \textbf{\&} is a bitwise \texttt{AND}
     operation and $\oplus$ are bitwise \texttt{XOR} operations.}
   \label{fig:simonround}
 \end{figure}
@@ -203,7 +203,7 @@ necessary key expansion and waits for input data that is to be
 encrypted/decrypted. Those accelerators support two different Simon widths:
 Simon64/128 and Simon128/128.
 
-The memory-mapped accelerator can operate in two different ways: i) unattended
+The memory-mapped accelerator can operate in two different ways: i) automatic
 operation --- ECB mode only, in which all necessary rounds are performed over a word until
 completion of encryption/decryption process, or ii) interactive operation, where
 software issues one round at a time, which enables software implementation of
@@ -243,7 +243,29 @@ flow is used mainly for area evaluation purposes and not fully concerned with
 actually running code on an FPGA prototyping target. SiFive's Freedom Platform
 dev kit is chosen for this task.
 
-\section{Evaluation}
+\section{Evaluation results}
+
+\subsection{Performance}
+
+To evaluate performance, we consider the case where a plaintext block with a size of
+1 kB is encrypted using different implementations of the Simon cipher, yielding
+eight different benchmarks:
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{media/ecb_speedup}
+  \caption{Speedup using different accelerator configurations in ECB mode.}
+  \label{fig:ecbspeedup}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{media/cbc_speedup}
+  \caption{Speedup using different accelerator configurations in CBC mode.}
+  \label{fig:cbcspeedup}
+\end{figure}
+
+\subsection{Area}
 
 \subsection{Security implications}
 
