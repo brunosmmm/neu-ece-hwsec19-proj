@@ -1,0 +1,27 @@
+#+TITLE: Simon HWACC Evaluation
+
+Evaluation is divided into eight modules as follows:
+
+* Module 1
+  Runs software implementation in ECB mode
+
+* Module 2
+  Runs software implementation in CBC mode
+
+* Module 3
+  Runs on MMIO with auto reload in ECB mode
+
+* Module 4
+  Runs on MMIO interactively in ECB mode
+
+* Module 5
+  Runs on MMIO interactively in CBC mode
+
+* Module 6
+  Runs on RoCC interactively in EBC mode
+
+* Module 7
+  Runs on RoCC interactively in CBC mode
+
+* Module 8
+  Runs on hybrid ACC in EBC mode
