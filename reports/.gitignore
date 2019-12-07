@@ -3,3 +3,7 @@
 *.fdb_latexmk
 *.fls
 *.synctex.gz
+auto/
+*.bbl
+*.blg
+*.out
