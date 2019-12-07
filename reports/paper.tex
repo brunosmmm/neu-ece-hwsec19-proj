@@ -88,6 +88,26 @@ lightweight cipher; it is a hardware-optimized cipher family developed by the
 NSA. Although faced with controversies due to polarized views towards the
 authors, it is an ISO standardized cipher.
 
+The Simon family of ciphers offers different possibilities for both block and
+key sizes. In all cases, both the round and key expansion functions make use
+only of bitwise \texttt{XOR}, \texttt{AND}, and left and right circular shifts.
+Figure~\ref{fig:simonround} shows the Feistel stepping of its round function.
+
+\begin{figure}
+  \centering
+  \include{media/simonround}
+  \caption{Simon's round function Feistel stepping. \textbf{S\textsuperscript{i}} are
+    circular left shifts by i bits; \textbf{\&} is a bitwise \texttt{AND}
+    operation and $\oplus$ are bitwise \texttt{XOR} operations.}
+  \label{fig:simonround}
+\end{figure}
+
+The number of necessary rounds is determined by the configuration of the cipher.
+In this work we explore only the Simon64/128 and Simon128/128 configurations,
+which require a number of 44 and 68 rounds per block, respectively.
+In the nomenclature Simon\textbf{N}/\textbf{M}, \textbf{N} is the block size and
+\textbf{M} is the key size in bits.
+
 \subsection{RISC-V ecosystem}
 
 The RISC-V ecosystem is rapidly growing, with many different implementations of
@@ -118,8 +138,8 @@ is chosen.
 
 \section{The Hybrid Crypto Accelerator}
 
-Going one step further than the two classic topologies used for accelerators
-discussed previously, we present a slightly different hybrid approach which has
+Going one step further than the two previously discussed topologies used for
+accelerators, we present a slightly different hybrid approach which has
 some interesting characteristics. Figure~\ref{fig:hybrid} shows the concept and
 possible operation modes of the hybrid crypto accelerator.
 
