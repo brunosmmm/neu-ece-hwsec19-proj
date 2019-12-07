@@ -8,7 +8,7 @@ void simon_mmio_initialize(uint8_t* key, uint8_t config, uint8_t wait) {
 
   // initialize
   reg_write64(SIMON_MMIO_BASE + SIMON_MMIO_REG_SCONF,
-              SIMON_MMIO_SCONF_SINGLE | SIMON_MMIO_SCONF_ENCDEC);
+              config);
   reg_write64(SIMON_MMIO_BASE + SIMON_MMIO_REG_KEY1, kw1);
   reg_write64(SIMON_MMIO_BASE + SIMON_MMIO_REG_KEY2, kw2);
 

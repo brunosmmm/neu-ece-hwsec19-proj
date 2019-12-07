@@ -40,7 +40,7 @@ TestResult test_mmio_ecb_auto(unsigned int testSize, uint8_t* testData) {
 
   // initialize acc
   simon_mmio_initialize((uint8_t *)key,
-                        SIMON_MMIO_SCONF_SINGLE | SIMON_MMIO_SCONF_ENCDEC, 1);
+                        SIMON_MMIO_SCONF_ENCDEC, 1);
 
   test_start(&result);
   for (i = 0; i <testSize; i += SIMON_64_128_BLOCK_SIZE) {
