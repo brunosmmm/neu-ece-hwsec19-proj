@@ -18,7 +18,7 @@ void do_test(void) {
   // block = *((uint64_t *)test_block);
   test_start(&result);
   // perform encryption rounds
-  TOOSLY_ENC(localData, TEST_DATA_SIZE);
+  TOOSLY_ENC(localData, TEST_DATA_SIZE/8);
 
   asm volatile("fence");
   test_end(&result);
