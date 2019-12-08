@@ -285,6 +285,18 @@ implementations using accelerators or a 2-way BOOM core for encryption in ECB
 and CBC mode, respectively.
 
 % TODO small interpretation paragraph here
+The hybrid accelerator is significantly faster than all other implementations
+tested. This is to be expected since the accelerator itself performs the memory
+requests without intervention of the CPU, directly into the memory bus. The
+memory-mapped accelerator in the automatic mode comes in as second fastest. This
+is also to be expected in comparison with the RoCC accelerator for example,
+since the latter is run in interactive mode, that is, the application code
+issues each round sequentially and sequential rounds are not immediately
+executed by the CPU, due to buffering and communication logic in the RoCC
+adapter fabric, in contrast to the former where rounds occur immediately (next
+clock cycle) one after the other.
+
+% superscalar also
 
 
 \begin{figure}
