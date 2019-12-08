@@ -3,7 +3,7 @@ PLOTS=ecb_speedup.pdf cbc_speedup.pdf
 
 all: $(PLOTS)
 
-$(PLOTS): plots.py
+$(PLOTS): plots.py ../../evaluation/rocket.results ../../evaluation/boom.results
 	python3 plots.py
 
 clean:
