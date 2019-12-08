@@ -193,8 +193,8 @@ choice since the infrastructure used to build the SoC to be evaluated is
 completely built using Chisel.
 
 The core Simon cipher functionality is implemented as the core IP and is
-re-utilized to build three different accelerator types: memory-mapped
-(loosely-coupled), RoCC (tightly-coupled and hybrid). In essence the the
+re-utilized to build three different accelerator types: memory-mapped I/O
+(MMIO, loosely-coupled), RoCC (tightly-coupled and hybrid). In essence the the
 accelerators are built by constructing wrappers around the common core.
 
 The first two accelerators have similar functionality: the user must initialize the
@@ -203,7 +203,7 @@ necessary key expansion and waits for input data that is to be
 encrypted/decrypted. Those accelerators support two different Simon widths:
 Simon64/128 and Simon128/128.
 
-The memory-mapped accelerator can operate in two different ways: i) automatic
+The MMIO accelerator can operate in two different ways: i) automatic
 operation --- ECB mode only, in which all necessary rounds are performed over a word until
 completion of encryption/decryption process, or ii) interactive or single operation, where
 software issues one round at a time, which enables software implementation of
@@ -288,7 +288,7 @@ and CBC mode, respectively.
 The hybrid accelerator is significantly faster than all other implementations
 tested. This is to be expected since the accelerator itself performs the memory
 requests without intervention of the CPU, directly into the memory bus. The
-memory-mapped accelerator in the automatic mode comes in as second fastest. This
+MMIO accelerator in the automatic mode comes in as second fastest. This
 is also to be expected in comparison with the RoCC accelerator for example,
 since the latter is run in interactive mode, that is, the application code
 issues each round sequentially and sequential rounds are not immediately
@@ -314,7 +314,7 @@ clock cycle) one after the other.
 
 It is of note that while this work implements a cryptographic primitive that can
 be used in-hardware to enable acceleration of ciphers, it is a proof-of-concept
-level rudimentary implementation.
+level, rudimentary implementation.
 
 Under more critical scrutiny there would be a few immediately reconizeable
 issues:
