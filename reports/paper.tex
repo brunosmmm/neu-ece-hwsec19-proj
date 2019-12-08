@@ -38,7 +38,9 @@
   This work uses a customized RISC-V SoC to explore performance trade-offs
   between different HWACC topologies (in-datapath, memory-mapped) for embedded
   systems in the security domain by implementing an IP core for cryptographic
-  primitive acceleration.
+  primitive acceleration. We also show a hybrid accelerator topology for
+  acceleration and/or secure memory storage which offers a speedup of 6x compared to a
+  pure software implementation.
   % results also go in here
 
 \end{abstract}
@@ -119,7 +121,28 @@ There are several alternatives in order to assemble a complete System on Chip
 open source community-provided designs can be used to kickstart development.
 
 To assemble an entire SoC for cycle-accurate simulation, UC Berkeley's Chipyard~\cite{Chipyard}
-is chosen.
+is chosen. Specifically, technologies used include:
+
+\subsubsection{RISC-V cores}
+
+There is already a variety of readily usable RISC-V cores out in the wild. To
+study different HWACC topologies, UC Berkeley's implementations are chosen; we
+select Rocket (in-order 5 stage pipeline, riscv64) and Berkeley out-of-order
+machine (BOOM).
+
+\subsubsection{RoCC interface}
+
+The RoCC interface is an interface developed for the Rocket RISC-V core that
+allows easy integration of HWACCs, effectively enabling the construction of
+tightly-coupled accelerators. This interface is also supported in UC Berkeley's
+BOOM implementation. In this paper, the terms tightly-coupled accelerator and
+RoCC accelerator are used interchangeably when talking about the specific
+implementations related to evaluation and results.
+
+The RISC-V ISA specifies 4 different opcodes, \texttt{custom0-3} which are used for passing data
+into and back the RoCC interface; with this mechanism, the HWACC is receives the
+contents of up to two CPU registers and optionally passes back a word to be stored in any of
+the CPU's registers as a result of the operation.
 
 \begin{figure}
   \centering
@@ -146,7 +169,9 @@ possible operation modes of the hybrid crypto accelerator.
 The hybrid crypto accelerator is distinct from the tightly-coupled topology in
 the way that it has a DMA port for direct access to the coherent memory
 hierarchy. This allows the accelerator to directly request data to be loaded and
-stored, enabling two different modes of operation.
+stored, enabling two different modes of operation. Note that due to the
+architecture of the RoCC interface, the accelerator will have access to the
+coherent memory hierarchy at the L2 cache level.
 
 \subsection{Operation mode I: batch processing}
 
@@ -298,6 +323,14 @@ clock cycle) one after the other.
 
 % superscalar also
 
+Figure~\ref{fig:scatter} shows the relationship between number of instructions
+retired by processor and total number of cycles for the benchmark to finish in
+the in-order (rocket) core. Ultimately, the number of instructions retired is
+correlated to code size; it is clear that for the accelerator configurations
+that allow encryption in the CBC mode to be implemented, there is little
+overhead incurred by the extra operations (XORs), which are carried out by
+the CPU.
+
 
 \begin{figure}
   \centering
@@ -349,6 +382,16 @@ interface will not be able to provide the desired flexibility and control
 granularity levels for detailed exploration.
 
 \section{Conclusions}
+
+The tools provided by the RISC-V community members enable computer architecture
+exploration in a very powerful way. This allowed for the exploration of
+different HWACC topologies; we found that there can be performance gains when
+using tightly-coupled accelerators and security gains.
+
+In order to achieve maximum performance/security, however, it is necessary to
+fully customize the microarchitecture and toolchain to fully orchestrate secure
+computations in the CPU's datapath, which will increase development costs.
+
 
 \bibliography{paper}
 \bibliographystyle{ieeetr}
