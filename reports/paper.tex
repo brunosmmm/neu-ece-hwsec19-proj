@@ -205,7 +205,7 @@ Simon64/128 and Simon128/128.
 
 The memory-mapped accelerator can operate in two different ways: i) automatic
 operation --- ECB mode only, in which all necessary rounds are performed over a word until
-completion of encryption/decryption process, or ii) interactive operation, where
+completion of encryption/decryption process, or ii) interactive or single operation, where
 software issues one round at a time, which enables software implementation of
 CBC or other modes.
 
@@ -247,14 +247,11 @@ dev kit is chosen for this task.
 
 \subsection{Performance}
 
-To evaluate performance, we consider the case where a plaintext block with a size of
-1 kB is encrypted using different implementations of the Simon cipher, yielding
-eight different benchmarks:
-
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{media/ecb_speedup}
-  \caption{Speedup using different accelerator configurations in ECB mode.}
+  \caption{Speedup using different accelerator configurations in ECB mode.
+    Values are relative to the in-order pure software implementation.}
   \label{fig:ecbspeedup}
 \end{figure}
 
@@ -263,6 +260,39 @@ eight different benchmarks:
   \includegraphics[width=\linewidth]{media/cbc_speedup}
   \caption{Speedup using different accelerator configurations in CBC mode.}
   \label{fig:cbcspeedup}
+\end{figure}
+
+To evaluate performance, we consider the case where a plaintext block with a size of
+1 kB is encrypted using different implementations of the Simon cipher, yielding
+eight different benchmarks:
+
+\begin{itemize}
+\item Pure software: ECB and CBC mode
+\item MMIO accelerator, single: ECB and CBC mode
+\item MMIO accelerator, automatic: ECB mode
+\item Tightly-coupled accelerator: ECB and CBC mode
+\item Hybrid accelerator: ECB mode
+\end{itemize}
+
+Usage of the MMIO accelerator in automatic mode highlights the characteristics
+of a heterogeneous system that is computation-bound, whereas usage of it in the
+single mode intends to model a communication-bound architecture.
+
+The reference software implementation is used as a baseline,
+Figures~\ref{fig:ecbspeedup},\ref{fig:cbcspeedup} show the relative speedup
+(computed from the total cycle count for each of the benchmarks) of alternative
+implementations using accelerators or a 2-way BOOM core for encryption in ECB
+and CBC mode, respectively.
+
+% TODO small interpretation paragraph here
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{media/scatter_results}
+  \caption{Distribution of all benchmark results with respect to both total
+    number of instructions retired by processor and total number of cycles
+    required to complete operations.}
+  \label{fig:scatter}
 \end{figure}
 
 \subsection{Area}

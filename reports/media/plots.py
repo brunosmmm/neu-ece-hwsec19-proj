@@ -3,13 +3,14 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import numpy
 
 TEST_NAMES = [
     "SW/ECB",
     "SW/CBC",
-    "MMIO/ECB (automatic)",
-    "MMIO/ECB (interactive)",
+    "MMIO/ECB (auto)",
+    "MMIO/ECB (single)",
     "MMIO/CBC",
     "RoCC/ECB",
     "RoCC/CBC",
@@ -117,3 +118,18 @@ if __name__ == "__main__":
     ax.grid(axis="y", b=False)
 
     plt.savefig("cbc_speedup.pdf")
+
+    # scatter plot
+    fig, ax = plt.subplots()
+
+    for cycle, inst, name in zip(rocket_cycles, rocket_insts, TEST_NAMES):
+        ax.plot(cycle, inst, "o", label=name)
+    ax.xaxis.set_major_formatter(ticker.EngFormatter())
+    ax.yaxis.set_major_formatter(ticker.EngFormatter())
+    ax.legend()
+    ax.set_xlabel("Cycles")
+    ax.set_ylabel("Instructions retired")
+    ax.set_title(
+        "Instructions retired vs Cycles for benchmarks on\nin-order core"
+    )
+    plt.savefig("scatter_results.pdf")

@@ -1,5 +1,5 @@
 
-PLOTS=ecb_speedup.pdf cbc_speedup.pdf
+PLOTS=ecb_speedup.pdf cbc_speedup.pdf scatter_results.pdf
 
 all: $(PLOTS)
 
