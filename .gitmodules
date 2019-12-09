@@ -13,3 +13,6 @@
 [submodule "freedom"]
 	path = freedom
 	url = https://github.com/brunosmmm/freedom.git
+[submodule "chipyard"]
+	path = chipyard
+	url = https://github.com/brunosmmm/chipyard.git
