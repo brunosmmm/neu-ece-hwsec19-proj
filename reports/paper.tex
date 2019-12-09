@@ -268,6 +268,9 @@ flow is used mainly for area evaluation purposes and not fully concerned with
 actually running code on an FPGA prototyping target. SiFive's Freedom Platform
 dev kit is chosen for this task.
 
+We generate a system that targets Digilent's Arty FPGA board, then use Xilinx
+Vivado to perform synthesis and implementation and extract metrics.
+
 \section{Evaluation results}
 
 \subsection{Performance}
@@ -319,7 +322,9 @@ since the latter is run in interactive mode, that is, the application code
 issues each round sequentially and sequential rounds are not immediately
 executed by the CPU, due to buffering and communication logic in the RoCC
 adapter fabric, in contrast to the former where rounds occur immediately (next
-clock cycle) one after the other.
+clock cycle) one after the other. The MMIO accelerator in single mode greatly
+suffers from the need to access the memory bus for each operation, ultimately
+making it slower than software.
 
 % superscalar also
 
@@ -343,6 +348,26 @@ the CPU.
 
 \subsection{Area}
 
+Synthesis and implementation are performed using Vivado. This is only done
+once, for the MMIO accelerator, as the core implementation of Simon is shared
+across all accelerators. Usage as reported by vivado is at 3119 LUTs and 2004
+flip flops, which account for approximately 17\% and 19.5\% of the total design
+(SoC) size.
+
+The somewhat large size of the accelerator design stems mainly from the
+unoptimized key expansion function, which accounts for roughly 75\% and 83.5\%
+of the flip flop and LUT usage for the entire accelerator. The round function
+accounts for the rest of the usage.
+
+\subsection{Power}
+
+Estimated power consumption is also reported after synthesis and implementation
+using Vivado. It is reported as 8mW for the simon accelerator alone --- the
+entire SoC power consumption is estimated at 252 mW (HWACC accounts for \approx 3\%).
+
+As is the case for area, power the key expansion is also responsible for the
+majority of power consumption, approximately 87.5\% of the total for the accelerator.
+
 \subsection{Security implications}
 
 It is of note that while this work implements a cryptographic primitive that can
@@ -360,7 +385,7 @@ issues:
   \item Due to the use of generic instruction / RoCC interface, accelerators
     can be exploited by attacker at unprivileged level. To overcome this,
     accelerators and toolchain must be modified to use customized instructions,
-    which can be configured for certain privilege levels only
+    which can be configured for certain privilege levels only.
 \end{itemize}
 
 \section{Future work}
