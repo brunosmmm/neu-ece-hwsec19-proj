@@ -11,9 +11,9 @@
 \geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2cm,rmargin=2cm,columnsep=0.8cm}
 \usetikzlibrary{positioning, calc, shapes, fit, backgrounds, patterns}
 
-\title{\textbf{Hardware accelerator topologies in heterogeneous systems: an evaluation in the
+\title{\textbf{Hardware accelerator coupling in heterogeneous systems: an evaluation in the
     security domain}}
-\author{Bruno Morais}
+\author{Bruno Morais \texttt{<soutomaiormunizmo.b@husky.neu.edu>}}
 \date{}
 
 \begin{document}
@@ -41,17 +41,59 @@
   primitive acceleration. We also show a hybrid accelerator topology for
   acceleration and/or secure memory storage which offers a speedup of 6x compared to a
   pure software implementation.
-  % results also go in here
 
 \end{abstract}
 
 \section{Introduction}
 
+The demand for power-efficient computing, specially on edge and/or embedded
+devices has continuously driven the development of hardware accelerators
+(HWACCs) to meet these power requirements. General-purpose computing units alone
+are too flexible and cannot achieve the same parallelism as a specialized
+accelerator. The growing complexity of algorithms, specially with the advent of
+widespread machine learning and security needs such as authentication, integrity
+verification and privacy, has pushed the boundaries of embedded systems,
+dramatically increasing the number of accelerators present in sophisticated
+embedded SoCs.
+
+With the number of HWACCs rapidly increasing, the use of typical memory mapped HWACC,
+which shares the memory bus of a general purpose CPU creates bottlenecks~\cite{TSS},
+specially for certain classes of applications, for instance streaming-based
+applications, where communication between HWACCs (function compositions) is a requirement.
+Figure~\ref{fig:loosely} shows the typical memory-mapped HWACC, also called a
+\textit{loosely-coupled} HWACC.
+
 \begin{figure}
   \centering
   \include{media/loosely_acc}
   \caption{Loosely-coupled HWACCs: typical memory mapped HWACC usage in a heterogenous architecture.}
+  \label{fig:loosely}
 \end{figure}
+
+In constrast with the \textit{loosely-coupled} accelerator which is external to
+the CPU datapath, an alternative topology is to bring the HWACC much closer, and
+effectively into the CPU datapath itself. Those are called
+\textit{tightly-coupled} HWACCs. Essentially, in this configuration, the HWACC
+can be seen as one of the CPU's functional units, dedicated to a certain
+specific task. Figure~\ref{fig:tightly} shows a simplified CPU datapath with
+tightly-coupled accelerators.
+
+While it is relatively straightforward to design accelerators and perform research using
+loosely-coupled accelerators by deploying them in FPGAs, for instance, research
+into tightly-coupled HWACCs has been historically prohibitive due to the need to
+have an easily modifiable processor implementation and all the necessary
+supporting tools such as compiler toolchain, simulators and a synthesis enabled
+design. The RISC-V project and its community have fostered the development of
+such a system, which is open source and user friendly, enabling much easier
+research of such a topology.
+
+Tightly-coupled accelerators are invaluable from a security perspective, not
+only to accelerate cryptographic functions but also to enable secure data
+storage. The main contribution of this work is the implementation of a HWACC
+that accelerates the Simon cipher and an analysis of the speedup provided by
+different couplings. We also show a hybrid tightly-coupled accelerator which has
+access to the on-chip coherent memory hierarchy and enables secure data storage
+and retrieval to/from main memory.
 
 \begin{figure}
   \centering
@@ -63,15 +105,34 @@
   }
   \caption{Tightly-coupled HWACCs: accelerator is moved into CPU datapath,
     operating similarly to microarchitectural Functional Units (FUs).}
+  \label{fig:tightly}
 \end{figure}
 
 \section{Related work}
 
-\subsection{Hardware accelerators?}
-% Tightly vs loosely coupled hwaccs
+\subsection{Hardware accelerator coupling in heterogeneous systems}
+The usage of different couplings (tightly/loosely coupled) leads to mixed
+results depending on the domain of the application. Typical usage of HWACCs fall
+within the loosely-coupled category, which pays little attention to interaction
+with on-chip components such as caches~\cite{tightLoose}.
 
-\subsection{RISC-V instruction set extensions}
-% Xcrypto
+There is potential gain by moving accelerators into the CPU datapath and
+enabling leveraging the memory hierarchy to increase speedup. This incurs in
+more development costs, as discussed before when compared to loosely-coupled
+accelerators, which are more easily abstracted and do not need extensive
+modifications to the toolchain.
+
+\subsection{RISC-V cryptographic extensions}
+The RISC-V community has formed a group to specify ISA extensions for
+cryptographic primitives~\cite{RiscVCrypto}. The approach is similar to Intel's
+AES-NI~\cite{AESNI}, and is expected to support at least AES and SHA-2. These
+type of accelerators are tightly-coupled accelerators directly controlled by
+software instructions.
+
+There is also some independent work showcasing the implementation of accelerated
+cryptographic functions by means of instruction set extensions by the University
+of Bristol~\cite{xcrypto}. The XCrypto is part of a larger project and
+implements AES, SHA-2 and SHA-3.
 
 \section{Background}
 
@@ -352,7 +413,8 @@ Synthesis and implementation are performed using Vivado. This is only done
 once, for the MMIO accelerator, as the core implementation of Simon is shared
 across all accelerators. Usage as reported by vivado is at 3119 LUTs and 2004
 flip flops, which account for approximately 17\% and 19.5\% of the total design
-(SoC) size.
+(SoC) size. The target FPGA has a total of 20800 and 41600 LUTs and flip flops
+available, respectively.
 
 The somewhat large size of the accelerator design stems mainly from the
 unoptimized key expansion function, which accounts for roughly 75\% and 83.5\%
@@ -363,7 +425,7 @@ accounts for the rest of the usage.
 
 Estimated power consumption is also reported after synthesis and implementation
 using Vivado. It is reported as 8mW for the simon accelerator alone --- the
-entire SoC power consumption is estimated at 252 mW (HWACC accounts for \approx 3\%).
+entire SoC power consumption is estimated at 252 mW (HWACC accounts for $\approx$ 3\%).
 
 As is the case for area, power the key expansion is also responsible for the
 majority of power consumption, approximately 87.5\% of the total for the accelerator.
