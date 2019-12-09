@@ -243,7 +243,7 @@ The hybrid accelerator also needs to be initialized with a key. However, due to
 development constraints, the accelerator only supports Simon64/128 in ECB mode.
 
 
-\subsection{Full-scale SoC simulation}
+\subsection{Full SoC simulation}
 
 Chipyard is used to generate synthesizable Verilog for the
 entire SoC, including RISC-V CPU core and accelerators under test. The tool also
@@ -292,7 +292,7 @@ To evaluate performance, we consider the case where a plaintext block with a siz
 eight different benchmarks:
 
 \begin{itemize}
-\item Pure software: ECB and CBC mode
+\item Software only: ECB and CBC mode
 \item MMIO accelerator, single: ECB and CBC mode
 \item MMIO accelerator, automatic: ECB mode
 \item Tightly-coupled accelerator: ECB and CBC mode
