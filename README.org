@@ -22,19 +22,19 @@ Structure of the repository is as follows:
 
 * Building
 
-  Build tools first with ```./scripts/build-tools.sh```. Then, make tests, evaluation and spike extensions with make in the root folder.
+  Build tools first with ``./scripts/build-tools.sh``. Then, make tests, evaluation and spike extensions with make in the root folder.
   You must have the riscv64 gcc compiler tools in the path (riscv64-unknown-elf-)
 
 ** Building cycle-accurate simulations
    To build cycle accurate simulations, make sure that the chipyard submodule is initialized, then do:
-   ```./scripts/init-submodules-no-riscv-tools.sh``` in the chipyard folder.
+   ``./scripts/init-submodules-no-riscv-tools.sh`` in the chipyard folder.
 
    Initialize environment by sourcing the env.sh script, then cd to sims/verilator/ and build with
-   ```make CONFIG=SimonRocketConfig TOP=TopWithSimonTL``` use that config for building a simulator with the Rocket core or use
-   ```SimonBoomConfig``` to use a BOOM core.
+   ``make CONFIG=SimonRocketConfig TOP=TopWithSimonTL`` use that config for building a simulator with the Rocket core or use
+   ``SimonBoomConfig`` to use a BOOM core.
 
    Once the simulators are built, evaluation can be run by changing to the evaluation folder and using
-   ```SIM_PATH=../chipyard/sims/verilator make test```
+   ``SIM_PATH=../chipyard/sims/verilator make test``
 
 ** Building FPGA
    See freedom README on how to build. You should build the E300 dev kit.
@@ -44,7 +44,7 @@ Structure of the repository is as follows:
 
   To run tests on Spike, there are two Makefiles that provide targets to run tests:
 
-  + In lightweight-sw, run ```make spike_run_simon``` to run the software reference implementation
-  + In iss-rocc-extension, run ```make simon_rocc_test```, ```make simon_mmio_test``` to run tests
+  + In lightweight-sw, run ``make spike_run_simon`` to run the software reference implementation
+  + In iss-rocc-extension, run ``make simon_rocc_test``, ``make simon_mmio_test`` to run tests
 
   Note that the hybrid accelerator implementation is not available in Spike.
