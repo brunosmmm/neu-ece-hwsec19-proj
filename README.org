@@ -1,4 +1,50 @@
 
 * Hardware Security Project
 
-Empty for now!
+Final project for EECE7390 in Fall/2019
+
+* Structure
+
+Structure of the repository is as follows:
+
++ chipyard (submodule) :: contains all necessary code for SoC with HWACCs and cycle accurate simulator building
++ evaluation :: contains benchmarks for evaluation of HWACCs
++ freedom (submodule) :: contains code that builds a FPGA targeted evaluation platform with the Simon HWACC
++ iss-rocc-extension :: code that implements RoCC and MMIO HWACC extensions for Spike
++ lightweight-hw :: hardware implementation of Simon cipher
++ lightweight-sw :: reference software implementation of ciphers and HWACC tests
++ reports :: source code for project report
++ riscv-isa-sim (submodule) :: Spike, modified so that RoCC extensions work
++ riscv-openocd (submodule) :: openocd with modifications for RISC-V support (used for debugging in-simulations)
++ riscv-pk (submodule) :: the RISC-V proxy kernel
++ riscv :: drivers for RISC-V utilities and HWACCs
++ scripts :: build scripts
+
+* Building
+
+  Build tools first with ```./scripts/build-tools.sh```. Then, make tests, evaluation and spike extensions with make in the root folder.
+  You must have the riscv64 gcc compiler tools in the path (riscv64-unknown-elf-)
+
+** Building cycle-accurate simulations
+   To build cycle accurate simulations, make sure that the chipyard submodule is initialized, then do:
+   ```./scripts/init-submodules-no-riscv-tools.sh``` in the chipyard folder.
+
+   Initialize environment by sourcing the env.sh script, then cd to sims/verilator/ and build with
+   ```make CONFIG=SimonRocketConfig TOP=TopWithSimonTL``` use that config for building a simulator with the Rocket core or use
+   ```SimonBoomConfig``` to use a BOOM core.
+
+   Once the simulators are built, evaluation can be run by changing to the evaluation folder and using
+   ```SIM_PATH=../chipyard/sims/verilator make test```
+
+** Building FPGA
+   See freedom README on how to build. You should build the E300 dev kit.
+
+* Running tests
+  To run tests on the cycle accurate simulators, just execute the binaries and point to the tests built in the lightweight-sw folder.
+
+  To run tests on Spike, there are two Makefiles that provide targets to run tests:
+
+  + In lightweight-sw, run ```make spike_run_simon``` to run the software reference implementation
+  + In iss-rocc-extension, run ```make simon_rocc_test```, ```make simon_mmio_test``` to run tests
+
+  Note that the hybrid accelerator implementation is not available in Spike.
