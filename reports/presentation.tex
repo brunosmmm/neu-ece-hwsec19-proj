@@ -157,7 +157,8 @@
   \end{minipage}
   \begin{itemize}
   \item Both in-order (Rocket) and out-of-order (BOOM) cores
-  \item Performance: eight benchmarks run on cycle-accurate simulations
+  \item SoC built with UC Berkeley's Chipyard (HWACCs attached)
+  \item Performance: eight benchmarks run on SoC cycle-accurate simulations
     \begin{itemize}
     \item Software only: ECB and CBC mode
     \item MMIO accelerator, single: ECB and CBC mode
@@ -188,12 +189,27 @@
 \end{frame}
 
 \begin{frame}{Results: area \& power}
+  \begin{itemize}
+  \item Arty FPGA with 20800 LUTs / 41600 FFs available
+  \item Usage reports 3119 LUTs and 2004 FFs, $\approx$ 17\% and 19.5\% of the
+    total design (SoC) size
+  \item Somewhat large usage due to unoptimized key expansion function
+  \item ACC power consumption estimated at 8mW, $\approx$ 3\% of total SoC
+    estimated power consumption (252mW)
+  \item Key expansion function also accounts for most of power consumption at
+    $\approx$ 87.5\% of ACC consumption
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Results: security considerations}
 \end{frame}
 
 \begin{frame}{Future work}
+  \begin{itemize}
+  \item More flexible accelerators, multiple encryption modes, parallelized decryption
+  \item Fully custom HWACC interface \& instructions, not RoCC
+  \item Privileged HWACC access, OS support (multi-context)
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{References}
