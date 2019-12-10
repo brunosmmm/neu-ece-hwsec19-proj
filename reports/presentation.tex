@@ -1,0 +1,207 @@
+\documentclass[dvipsnames]{beamer}
+\usepackage{tikz}
+\usepackage{standalone}
+\usepackage{wrapfig}
+\usetikzlibrary{positioning, calc, shapes, fit, backgrounds, patterns}
+\addtobeamertemplate{navigation symbols}{}{%
+  \usebeamerfont{footline}%
+  \usebeamercolor[fg]{footline}%
+  \hspace{1em}%
+  \insertframenumber/\inserttotalframenumber
+}
+\setbeamercolor{footline}{fg=NavyBlue}
+\setbeamerfont{footline}{series=\bfseries}
+\title{Hardware accelerator coupling in heterogeneous systems: an evaluation in the
+  security domain}
+\author{Bruno S M M Morais}
+\date{December 10, 2019}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Heterogeneous systems}
+  \begin{itemize}
+  \item Specialized HWACCs required for energy efficient embedded / edge computing
+  \item Explosion in \# of ACCs in recent SoCs, specially with deployment of
+    machine learning, DSP algorithms for instance
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Loosely-coupled accelerators}
+  \begin{columns}[T]
+    \begin{column}{0.35\textwidth}
+      \resizebox{0.35\textwidth}{!}{
+        \begin{minipage}{0.5\textwidth}
+          \centering
+          \include{media/loosely_acc}
+        \end{minipage}
+      }
+    \end{column}
+    \hfill
+    \begin{column}{0.65\textwidth}
+      \centering
+      \begin{itemize}
+      \item Access through shared memory bus
+      \item Usually interrupts CPU when task is done
+      \item With increase of \# of ACCs, communication becomes bottleneck
+      \item CPU typically orchestrates compositions of HWACC functions
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Tightly-coupled accelerators}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item ACC moved into CPU datapath
+        \item Requires ISA modification/extensions
+        \item More difficult to explore, requires extensive modification of
+          $\mu$Architecture and tools
+      \end{itemize}
+    \end{column}
+    \hfill
+    \begin{column}{0.5\textwidth}
+      %\centering
+      \resizebox{0.45\textwidth}{!}{
+        \begin{minipage}{0.75\textwidth}
+          \centering
+          \include{media/tightly_acc}
+        \end{minipage}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{RISC-V ecosystem}
+  \begin{columns}[T]
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+      \item FOSS ISA specification and many implementations
+      \item ISA is built to be extensible
+      \item RoCC interface enables attaching HWACCs to datapath easily
+        \begin{itemize}
+        \item 4 custom opcodes for routing to 4 HWACCs
+        \item Contents of two registers passed into HWACC
+        \item Optionally response from HWACC written to a register
+        \item Optional interface for requests into L1 cache
+        \end{itemize}
+      \end{itemize}
+    \end{column}
+    \hfill
+    \begin{column}{0.4\textwidth}
+      \centering
+      \includegraphics[width=0.75\textwidth]{media/Tall_2.pdf}
+      \includegraphics[width=1.0\textwidth]{media/rocc.pdf}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{The Simon cipher family}
+  \begin{columns}[T]
+    \begin{column}{0.35\textwidth}
+    \include{media/simonround}
+    \end{column}
+    \hfill
+  \begin{column}{0.65\textwidth}
+    \begin{itemize}
+    \item Optimized for hardware implementations
+    \item Only bitwise rotate, bitwise XOR and bitwise AND
+    \item 64/128 (44 rounds) and 128/128 (128 rounds) configurations
+    \end{itemize}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Hybrid crypto accelerator}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+      \item Batch encrypt/decrypt
+      \item Transparent encrypted memory load/store
+      \item Direct access into coherent memory through DMA
+      \item In this work, HWACC accesses into memory at L2 cache level
+      \end{itemize}
+    \end{column}
+    \hfill
+    \begin{column}{0.5\textwidth}
+      % \centering
+      \resizebox{0.3\textwidth}{!}{
+        \begin{minipage}{0.5\textwidth}
+          \centering
+          \include{media/hybrid_acc}
+        \end{minipage}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Experimental setup}
+  \begin{minipage}[0.2\textheight]{\textwidth}
+    \begin{columns}[T]
+      \begin{column}{0.8\textwidth}
+        \begin{itemize}
+        \item Three Simon accelerators
+        \begin{itemize}
+        \item MMIO (loosely-coupled)
+        \item RoCC (tightly-coupled)
+        \item RoCC + DMA (hybrid)
+          \end{itemize}
+        \end{itemize}
+      \end{column}
+      \begin{column}{0.2\textwidth}
+        \includegraphics[width=2.5cm]{media/cogs.jpeg}
+      \end{column}
+    \end{columns}
+  \end{minipage}
+  \begin{itemize}
+  \item Both in-order (Rocket) and out-of-order (BOOM) cores
+  \item Performance: eight benchmarks run on cycle-accurate simulations
+    \begin{itemize}
+    \item Software only: ECB and CBC mode
+    \item MMIO accelerator, single: ECB and CBC mode
+    \item MMIO accelerator, automatic: ECB mode
+    \item Tightly-coupled accelerator: ECB and CBC mode
+    \item Hybrid accelerator: ECB mode
+    \end{itemize}
+  \item Area \& power: HWACC synthesized for Xilinx FPGA, post-implementation
+    metrics extracted
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Results: performance}
+  \begin{columns}[T]
+  \begin{column}{0.5\textwidth}
+  \includegraphics[width=1.0\textwidth]{media/ecb_speedup}
+  \includegraphics[width=1.0\textwidth]{media/cbc_speedup}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+  \begin{itemize}
+    \item Hybrid in batch mode is fastest, followed by regular MMIO
+    \item Gains with RoCC accelerator, but is slower than 2-way BOOM SW only
+    \item Need to understand RoCC interface timing better
+    \item CBC mode performance very similar to EBC in comparable configurations
+  \end{itemize}
+  \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Results: area \& power}
+\end{frame}
+
+\begin{frame}{Results: security considerations}
+\end{frame}
+
+\begin{frame}{Future work}
+\end{frame}
+
+\begin{frame}{References}
+\end{frame}
+
+\begin{frame}{Questions?}
+  \centering
+  \huge\bfseries ?
+\end{frame}
+
+\end{document}
